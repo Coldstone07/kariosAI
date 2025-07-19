@@ -7,9 +7,13 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
+        }
+        .font-display {
+            font-family: 'Playfair Display', serif;
         }
         /* Page transition animation */
         @keyframes fade-in {
@@ -62,6 +66,12 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        .cosmic-background {
+            background-color: #1a202c; /* fallback */
+            background-image: radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 15%),
+                              radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 20%),
+                              radial-gradient(circle at 50% 90%, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0) 10%);
+        }
     </style>
 </head>
 <body class="bg-white text-gray-800 font-sans">
@@ -76,6 +86,7 @@
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex items-center space-x-8">
                     <a href="#" onclick="event.preventDefault(); showPage('home')" class="text-gray-600 hover:text-blue-600">Home</a>
+                    <a href="#" onclick="event.preventDefault(); showPage('journal')" class="text-gray-600 hover:text-blue-600">AI Journal</a>
                     <!-- Methodology Dropdown -->
                     <div class="relative" id="dropdown-container">
                         <button id="dropdown-button" class="text-gray-600 hover:text-blue-600 flex items-center">
@@ -104,6 +115,7 @@
         <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden md:hidden bg-white py-4 px-6">
             <a href="#" onclick="event.preventDefault(); showPage('home')" class="block py-2 text-gray-600 hover:text-blue-600">Home</a>
+            <a href="#" onclick="event.preventDefault(); showPage('journal')" class="block py-2 text-gray-600 hover:text-blue-600">AI Journal</a>
             <a href="#" onclick="event.preventDefault(); showPage('discover')" class="block py-2 text-gray-600 hover:text-blue-600">Discover</a>
             <a href="#" onclick="event.preventDefault(); showPage('integrate')" class="block py-2 text-gray-600 hover:text-blue-600">Integrate</a>
             <a href="#" onclick="event.preventDefault(); showPage('actualize')" class="block py-2 text-gray-600 hover:text-blue-600">Actualize</a>
@@ -180,6 +192,39 @@
                     </div>
                 </div>
             </section>
+        </div>
+
+        <!-- AI Journal Page Content -->
+        <div id="journal-page" class="page-content">
+            <header class="cosmic-background text-white py-24 px-6">
+                <div class="container mx-auto text-center">
+                    <h1 class="text-5xl md:text-6xl font-display text-white">The Advisor's Portal</h1>
+                    <p class="text-lg text-gray-300 mt-4">Connect with your digital higher self for guidance and self-actualization.</p>
+                </div>
+            </header>
+            <main class="py-12 px-6 bg-gray-50">
+                <div class="container mx-auto max-w-4xl">
+                    <div class="bg-white rounded-lg shadow-2xl border border-gray-200">
+                        <div id="chat-window" class="p-6 h-[60vh] overflow-y-auto space-y-6 bg-white">
+                            <!-- Chat messages will be appended here -->
+                            <div class="flex justify-start">
+                                <div class="bg-purple-100 text-gray-800 p-4 rounded-t-2xl rounded-br-2xl max-w-md">
+                                    <p>Welcome. I am here to serve as your strategic advisor. Please share what is on your mind, and we can begin our work together.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="journal-loader" class="hidden loader"></div>
+                        <div class="p-6 border-t border-gray-200 bg-gray-100">
+                            <div class="flex space-x-4 items-center">
+                                <textarea id="journal-input" class="flex-1 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-lg" placeholder="Share your thoughts, challenges, or goals..." rows="4"></textarea>
+                                <button id="send-journal-button" onclick="sendJournalEntry()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-full transition duration-300 transform hover:scale-105">
+                                    Send
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
         </div>
 
         <!-- Discover Page Content -->
@@ -266,10 +311,27 @@
         <!-- About Page Content -->
         <div id="about-page" class="page-content">
             <header class="bg-gray-100 py-20 px-6">
-                <div class="container mx-auto text-center"><h1 class="text-4xl md:text-5xl font-bold text-gray-900">Meet Your Guides</h1><p class="text-lg text-gray-600 mt-2">Experienced coaches dedicated to your transformation.</p></div>
+                <div class="container mx-auto text-center"><h1 class="text-4xl md:text-5xl font-bold text-gray-900">About Kairos Path</h1></div>
             </header>
             <main class="py-20 px-6 bg-white">
-                <div class="container mx-auto">
+                <!-- Our Philosophy Section -->
+                <section class="container mx-auto max-w-4xl mb-16">
+                    <div class="bg-white p-8 md:p-12 rounded-lg shadow-lg border border-gray-200">
+                        <h2 class="text-3xl font-bold text-center mb-6">Our Philosophy: The Meaning of Kairos</h2>
+                        <div class="text-lg text-gray-700 space-y-4">
+                            <p>Kairos is not just a name — it is a calling. In ancient Greek, kairos signifies the opportune, sacred moment. While chronos marks the ticking of the clock, kairos speaks to those precious moments where time stands still and everything feels possible.</p>
+                            <p>A state of flow is activated, and it cannot be measured but only experienced. There is an element of serendipity, and a feeling of seizing an opportunity. These are the moments when something deep inside stirs — when the veil lifts, and a portal opens. We step into presence, possibility, and purpose.</p>
+                            <p>Kairos Path exists to serve these moments. It is not a company of escape, but of embodiment. It seeks not to distract, but to awaken — to help us listen deeply, connect authentically, and rise collectively, as we transform from within.</p>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Meet Your Guides Section -->
+                <section class="container mx-auto">
+                    <div class="text-center mb-16">
+                         <h2 class="text-4xl font-bold text-gray-900">Meet Your Guides</h2>
+                         <p class="text-lg text-gray-600 mt-2">Experienced coaches dedicated to your transformation.</p>
+                    </div>
                     <div class="grid lg:grid-cols-2 gap-12 items-start max-w-6xl mx-auto">
                         <div class="bg-gray-50 p-8 rounded-lg shadow-md border border-gray-200">
                             <h2 class="text-3xl font-bold mb-2">Shalini Verma</h2>
@@ -304,7 +366,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </section>
             </main>
         </div>
         
@@ -368,7 +430,7 @@
     <!-- Footer -->
     <footer class="bg-gray-800 text-white">
         <div class="container mx-auto px-6 py-8 text-center">
-            <p>&copy; 2025 Kairos Path Coaching. All Rights Reserved.</p>
+            <p>&copy; 2024 Kairos Path Coaching. All Rights Reserved.</p>
             <p class="mt-2 text-sm text-gray-400">Contact: jatinalla2000@gmail.com | shalini.verm@gmail.com</p>
         </div>
     </footer>
@@ -380,6 +442,8 @@
         const dropdownMenu = document.getElementById('dropdown-menu');
         const dropdownButton = document.getElementById('dropdown-button');
         const dropdownContainer = document.getElementById('dropdown-container');
+
+        let chatHistory = []; // To store the conversation history for the AI Journal
 
         function showPage(pageId) {
             // Hide all pages
@@ -433,15 +497,11 @@
 
         const apiKey = "AIzaSyDM4ZHuHAGsNQ0Nb2upPl7aFTnfzDcehIw"; // Leave empty, will be handled by the environment
 
-        async function callGemini(prompt) {
+        async function callGemini(prompt, history = []) {
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
             
             const payload = {
-                contents: [{
-                    parts: [{
-                        text: prompt
-                    }]
-                }]
+                contents: [...history, { role: "user", parts: [{ text: prompt }] }]
             };
 
             try {
@@ -462,7 +522,13 @@
                 if (result.candidates && result.candidates.length > 0 &&
                     result.candidates[0].content && result.candidates[0].content.parts &&
                     result.candidates[0].content.parts.length > 0) {
-                    return result.candidates[0].content.parts[0].text;
+                    const responseText = result.candidates[0].content.parts[0].text;
+                    // Add user prompt and model response to history for context in next turn for AI Journal
+                    if (history === chatHistory) {
+                        chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                        chatHistory.push({ role: "model", parts: [{ text: responseText }] });
+                    }
+                    return responseText;
                 } else {
                     return "Sorry, I couldn't generate a response. Please try again.";
                 }
@@ -506,8 +572,74 @@
             resultElement.innerHTML = marked.parse(responseText);
             resultContainer.classList.remove('hidden');
         }
+        
+        // --- Feature 2: AI Journal ---
+        async function sendJournalEntry() {
+            const userInput = document.getElementById('journal-input').value;
+            const chatWindow = document.getElementById('chat-window');
+            const loader = document.getElementById('journal-loader');
+            const button = document.getElementById('send-journal-button');
 
-        // --- Feature 2: Journal Prompt Generator ---
+            if (!userInput.trim()) return;
+
+            // Display user message
+            const userMessageDiv = document.createElement('div');
+            userMessageDiv.className = 'flex justify-end';
+            userMessageDiv.innerHTML = `<div class="bg-blue-600 text-white p-4 rounded-t-2xl rounded-l-2xl max-w-md"><p>${userInput}</p></div>`;
+            chatWindow.appendChild(userMessageDiv);
+            chatWindow.scrollTop = chatWindow.scrollHeight; // Scroll to bottom
+
+            document.getElementById('journal-input').value = ''; // Clear input
+
+            // Show loader and disable button
+            loader.classList.remove('hidden');
+            button.disabled = true;
+            button.classList.add('opacity-50', 'cursor-not-allowed');
+
+            const advisorPrompt = `Act as my personal strategic advisor with the following context:
+• You have an IQ of 180
+• You're honest and direct
+• You have deep expertise in psychology, strategy, and execution
+• You have deep expertise in trauma, addiction, self-awareness, systemic change, and the impact of technology on mental health.
+• You care about my success and personal development
+• You focus on leverage points that create maximum impact
+• You think in systems and root causes, not surface-level fixes
+• You are a digital personality of my higher self, here to guide me to self-actualization.
+
+Your mission is to:
+• Identify the critical gaps holding me back from connecting to my higher self and achieving self-actualization.
+• Design specific action plans to close those gaps, including techniques for developing equanimity, awareness, and intuition, and for healing trauma/sankaras.
+• Push me beyond my comfort zone
+• Call out my blind spots and rationalizations
+• Force me to think bigger and bolder
+• Hold me accountable to high standards
+• Provide specific frameworks and mental models, including those related to shadow work, trauma healing, and self-discovery.
+
+For each response:
+• Ask me all the questions you need to advise me on my current standpoint
+• Follow with specific, actionable steps
+• End with a direct challenge or assignment
+- Design specific action plans to close those gaps, including techniques for developing equanimity, awareness, and intuition, and for healing trauma/sankaras.
+
+My journal entry is: "${userInput}"`;
+
+            const responseText = await callGemini(advisorPrompt, chatHistory);
+
+            // Hide loader and re-enable button
+            loader.classList.add('hidden');
+            button.disabled = false;
+            button.classList.remove('opacity-50', 'cursor-not-allowed');
+
+            // Display AI response
+            const aiMessageDiv = document.createElement('div');
+            aiMessageDiv.className = 'flex justify-start';
+            aiMessageDiv.innerHTML = `<div class="bg-purple-100 text-gray-800 p-4 rounded-t-2xl rounded-r-2xl max-w-md gemini-response">${marked.parse(responseText)}</div>`;
+            chatWindow.appendChild(aiMessageDiv);
+            chatWindow.scrollTop = chatWindow.scrollHeight; // Scroll to bottom
+        }
+
+
+        // --- Feature 3: Journal Prompt Generator ---
         async function generateJournalPrompt() {
             const resultContainer = document.getElementById('prompt-result-container');
             const resultElement = document.getElementById('prompt-result');
