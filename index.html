@@ -494,14 +494,13 @@
         });
 
         // --- Gemini API Logic ---
-
-        const apiKey = ""; // Leave empty, will be handled by the environment
-
         async function callGemini(prompt, history = []) {
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-            
+            // This URL points to our own serverless function, not directly to Google's API
+            const apiUrl = '/.netlify/functions/call-gemini'; 
+
             const payload = {
-                contents: [...history, { role: "user", parts: [{ text: prompt }] }]
+                prompt: prompt,
+                history: history
             };
 
             try {
@@ -534,7 +533,7 @@
                 }
 
             } catch (error) {
-                console.error("Error calling Gemini API:", error);
+                console.error("Error calling serverless function:", error);
                 return "An error occurred while contacting the AI guide. Please check your connection and try again.";
             }
         }
