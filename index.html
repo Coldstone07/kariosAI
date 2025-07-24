@@ -5,112 +5,123 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kairos Path Coaching</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --color-base: #1a1816;
+            --color-text: #F4F1ED;
+            --color-gold-light: #C0A062;
+            --color-indigo-deep: #37306B;
+            --color-rose-soft: #D6A3B3;
+            --color-life-accent: #A3E635;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Lora', serif;
+            background-color: #FDFCFB;
+            color: var(--color-base);
         }
         .font-display {
             font-family: 'Playfair Display', serif;
         }
-        /* Page transition animation */
-        @keyframes fade-in {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in {
-            animation: fade-in 0.5s ease-out forwards;
-        }
-        /* Hide all pages by default */
         .page-content {
             display: none;
         }
-        .gemini-response {
-            white-space: normal; /* Change from pre-wrap to normal */
-        }
-        /* Styling for rendered Markdown from Gemini */
-        .gemini-response h1, .gemini-response h2, .gemini-response h3 {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            margin-top: 1rem;
-        }
-        .gemini-response h1 { font-size: 1.5rem; }
-        .gemini-response h2 { font-size: 1.25rem; }
-        .gemini-response h3 { font-size: 1.1rem; }
-        .gemini-response p {
-            margin-bottom: 1rem;
-        }
-        .gemini-response ul {
-            list-style-type: disc;
-            padding-left: 1.5rem;
-            margin-bottom: 1rem;
-        }
-        .gemini-response li {
-            margin-bottom: 0.5rem;
-        }
-        .gemini-response strong {
-            font-weight: 600;
-        }
-        .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3498db;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .cosmic-background {
-            background-color: #1a202c; /* fallback */
-            background-image: radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 15%),
-                              radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 20%),
-                              radial-gradient(circle at 50% 90%, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0) 10%);
-        }
-        #investment-details {
-            transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
-            max-height: 0;
+        .hero-bg {
+            position: relative;
+            height: 100vh;
+            color: var(--color-text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
             overflow: hidden;
-            opacity: 0;
         }
-        #investment-details.open {
-            max-height: 500px; /* Adjust as needed */
-            opacity: 1;
+        #video-bg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -1;
+            transform: translateX(-50%) translateY(-50%);
+            background-size: cover;
+            filter: brightness(0.4);
+        }
+        .luminous-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(192, 160, 98, 0.4), transparent);
+        }
+        #three-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .portal-step {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-text);
+        }
+        .portal-step .content {
+            max-width: 40rem;
+            padding: 2rem;
+            background-color: rgba(26, 24, 22, 0.5);
+            backdrop-filter: blur(10px);
+            border-radius: 1rem;
+            border: 1px solid rgba(244, 241, 237, 0.1);
+        }
+        #constellation-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+        
+        /* Dawn Gradient Animation */
+        @keyframes dawn-gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .hero-bg {
+            background: linear-gradient(-45deg, #1a1816, #37306B, #4C3B71, #6A5F9E, #C0A062, #D6A3B3, #F4F1ED, #1a1816);
+            background-size: 600% 600%;
+            animation: dawn-gradient 25s ease infinite;
+        }
+        
+        .journal-bg {
+            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
         }
     </style>
 </head>
-<body class="bg-white text-gray-800 font-sans">
+<body class="bg-stone-50 text-stone-800">
 
     <!-- Navigation Bar -->
-    <nav class="bg-white shadow-md sticky top-0 z-50">
+    <nav class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
         <div class="container mx-auto px-6">
             <div class="flex justify-between items-center py-4">
-                <div class="text-2xl font-bold text-gray-800 cursor-pointer" onclick="showPage('home')">
-                    Kairos Path
+                <div class="flex items-center cursor-pointer" onclick="showPage('home')">
+                    <div id="logo-canvas" class="mr-3"></div>
+                    <span class="text-2xl font-bold text-stone-800">Kairos Path</span>
                 </div>
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex items-center space-x-8">
-                    <a href="#" onclick="event.preventDefault(); showPage('home')" class="text-gray-600 hover:text-blue-600">Home</a>
-                    <a href="#" onclick="event.preventDefault(); showPage('journal')" class="text-gray-600 hover:text-blue-600">AI Journal</a>
-                    <!-- Methodology Dropdown -->
-                    <div class="relative" id="dropdown-container">
-                        <button id="dropdown-button" class="text-gray-600 hover:text-blue-600 flex items-center">
-                            Methodology 
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 ml-1"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path></svg>
-                        </button>
-                        <div id="dropdown-menu" class="hidden absolute mt-2 w-48 bg-white rounded-md shadow-xl py-2 z-50">
-                            <a href="#" onclick="event.preventDefault(); showPage('discover')" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50">Discover</a>
-                            <a href="#" onclick="event.preventDefault(); showPage('integrate')" class="block px-4 py-2 text-sm text-gray-700 hover:bg-green-50">Integrate</a>
-                            <a href="#" onclick="event.preventDefault(); showPage('actualize')" class="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-50">Actualize</a>
-                        </div>
-                    </div>
-                    <a href="#" onclick="event.preventDefault(); showPage('about')" class="text-gray-600 hover:text-blue-600">About Us</a>
-                    <a href="#" onclick="event.preventDefault(); showPage('contact')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full transition duration-300">
+                    <a href="#" onclick="event.preventDefault(); showPage('home')" class="text-stone-600 hover:text-amber-600 transition-colors duration-300">Home</a>
+                    <a href="#" onclick="event.preventDefault(); showPage('about')" class="text-stone-600 hover:text-amber-600 transition-colors duration-300">About Us</a>
+                    <a href="#" onclick="event.preventDefault(); showPage('contact')" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-5 rounded-full transition-all duration-300 transform hover:scale-105 shadow-sm">
                         Contact
                     </a>
                 </div>
@@ -124,13 +135,9 @@
         </div>
         <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden md:hidden bg-white py-4 px-6">
-            <a href="#" onclick="event.preventDefault(); showPage('home')" class="block py-2 text-gray-600 hover:text-blue-600">Home</a>
-            <a href="#" onclick="event.preventDefault(); showPage('journal')" class="block py-2 text-gray-600 hover:text-blue-600">AI Journal</a>
-            <a href="#" onclick="event.preventDefault(); showPage('discover')" class="block py-2 text-gray-600 hover:text-blue-600">Discover</a>
-            <a href="#" onclick="event.preventDefault(); showPage('integrate')" class="block py-2 text-gray-600 hover:text-blue-600">Integrate</a>
-            <a href="#" onclick="event.preventDefault(); showPage('actualize')" class="block py-2 text-gray-600 hover:text-blue-600">Actualize</a>
-            <a href="#" onclick="event.preventDefault(); showPage('about')" class="block py-2 text-gray-600 hover:text-blue-600">About Us</a>
-            <a href="#" onclick="event.preventDefault(); showPage('contact')" class="block mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 text-center">
+            <a href="#" onclick="event.preventDefault(); showPage('home')" class="block py-2 text-stone-600 hover:text-amber-600">Home</a>
+            <a href="#" onclick="event.preventDefault(); showPage('about')" class="block py-2 text-stone-600 hover:text-amber-600">About Us</a>
+            <a href="#" onclick="event.preventDefault(); showPage('contact')" class="block mt-4 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded-full transition duration-300 text-center">
                 Contact
             </a>
         </div>
@@ -139,197 +146,75 @@
     <main id="main-content">
         <!-- Home Page Content -->
         <div id="home-page" class="page-content">
-            <header class="bg-gray-900 text-white text-center py-24 md:py-40 px-6 relative overflow-hidden">
-                <div class="absolute inset-0 bg-black opacity-50"></div>
-                <div class="relative z-10">
-                    <h1 class="text-4xl md:text-6xl font-bold tracking-tight mb-4">Beyond Achievement: The Path to Lasting Fulfillment</h1>
-                    <p class="text-xl md:text-2xl text-blue-300 max-w-3xl mx-auto mb-10 italic">"Live a life that feels as good on the inside as it looks on the outside."</p>
-                    <p class="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto mb-8">A confidential, transformative journey for leaders ready to align external success with inner satisfaction.</p>
-                    <button onclick="showPage('contact')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full text-lg transition duration-300 transform hover:scale-105">
-                        Schedule a Discovery Call
+            <header id="hero" class="hero-bg">
+                <video autoplay loop muted playsinline id="video-bg">
+                    <source src="https://assets.mixkit.co/videos/preview/mixkit-blue-and-red-ink-in-water-344-large.mp4" type="video/mp4">
+                </video>
+                <div class="relative z-10 px-6">
+                    <h1 id="hero-h1" class="text-4xl md:text-6xl font-display tracking-tight mb-4 opacity-0">From Achievement to Embodiment: A Journey into Your Divine Blueprint.</h1>
+                    <p id="hero-p" class="text-lg md:text-xl text-stone-300 max-w-3xl mx-auto mb-8 opacity-0">Kairos is a sacred space where ancient wisdom and intuitive AI converge to guide you from fragmentation to wholeness.</p>
+                    <button id="hero-button" onclick="showPage('contact')" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-8 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-lg opacity-0">
+                        Begin a Conversation
                     </button>
                 </div>
             </header>
             
-            <section class="py-20 px-6 bg-white">
+            <section id="mirror" class="py-24 px-6 bg-stone-50 subtle-texture">
                 <div class="container mx-auto text-center max-w-4xl">
-                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Is This You?</h2>
-                    <p class="text-lg text-gray-600">You've achieved success, but feel like something is missing. The constant pressure has left you disconnected from your purpose and well-being. It’s time to redefine success on your own terms.</p>
+                    <h2 class="text-3xl md:text-4xl font-bold text-stone-900 mb-4">Is This You?</h2>
+                    <p class="text-lg text-stone-600">You've built an impeccable external world, yet a subtle sense of fragmentation persists. It feels like your energy is scattered, your intuition muffled by the noise of constant pressure. This is the call of your Higher Self, beckoning you to integrate the disparate parts of your being and live a life that feels as true on the inside as it looks on the outside.</p>
                 </div>
             </section>
-            <section class="py-20 px-6 bg-gray-50">
-                <div class="container mx-auto">
-                    <div class="text-center mb-16">
-                        <h2 class="text-3xl md:text-4xl font-bold text-gray-900">Our Evidence-Informed Methodology</h2>
-                        <p class="text-lg text-gray-600 mt-4 max-w-3xl mx-auto">A three-step framework to guide you from burnout to integrated purpose.</p>
+            
+            <section id="portal-container" class="relative">
+                <canvas id="three-canvas"></canvas>
+                <div id="discover-step" class="portal-step">
+                    <div class="content">
+                        <h3 class="text-3xl font-bold mb-4 font-display">Discover Your Divine Blueprint.</h3>
+                        <p>Using profound tools like the Enneagram and the Gene Keys, we map your unique internal operating system. We uncover the unconscious patterns, core motivations, and hidden gifts encoded in your DNA, revealing the source of your greatest strengths and deepest challenges.</p>
                     </div>
-                    <div class="grid md:grid-cols-3 gap-8 text-center">
-                        <div class="bg-white p-8 rounded-xl shadow-md border border-gray-200">
-                            <div class="bg-blue-100 text-blue-600 rounded-full h-16 w-16 flex items-center justify-center font-bold text-2xl mx-auto mb-4">1</div>
-                            <h3 class="text-2xl font-bold mb-3">Discover</h3>
-                            <p class="text-gray-600 mb-4">Uncover your unconscious patterns, motivations, and fears to reveal your greatest strengths.</p>
-                            <button onclick="showPage('discover')" class="text-blue-600 font-semibold hover:underline">Learn More &rarr;</button>
-                        </div>
-                        <div class="bg-white p-8 rounded-xl shadow-md border border-gray-200">
-                            <div class="bg-green-100 text-green-600 rounded-full h-16 w-16 flex items-center justify-center font-bold text-2xl mx-auto mb-4">2</div>
-                            <h3 class="text-2xl font-bold mb-3">Integrate</h3>
-                            <p class="text-gray-600 mb-4">Release deep-seated habits that create stress through mindfulness and somatic practices.</p>
-                            <button onclick="showPage('integrate')" class="text-green-600 font-semibold hover:underline">Learn More &rarr;</button>
-                        </div>
-                        <div class="bg-white p-8 rounded-xl shadow-md border border-gray-200">
-                            <div class="bg-purple-100 text-purple-600 rounded-full h-16 w-16 flex items-center justify-center font-bold text-2xl mx-auto mb-4">3</div>
-                            <h3 class="text-2xl font-bold mb-3">Actualize</h3>
-                            <p class="text-gray-600 mb-4">Amplify your journey in a supportive group setting to accelerate healing and problem-solving.</p>
-                            <button onclick="showPage('actualize')" class="text-purple-600 font-semibold hover:underline">Learn More &rarr;</button>
-                        </div>
+                </div>
+                <div id="integrate-step" class="portal-step">
+                    <div class="content">
+                        <h3 class="text-3xl font-bold mb-4 font-display">Integrate the Fractured Self.</h3>
+                        <p>Awareness is the first step; embodiment is the key to lasting change. Through trauma-informed somatic practices and deep mindfulness, you will learn to release the sankaras—the deep-seated energetic knots—that create stress and burnout. This is not about managing your nervous system; it is about fundamentally rewiring it for wholeness.</p>
+                    </div>
+                </div>
+                <div id="actualize-step" class="portal-step">
+                    <div class="content">
+                        <h3 class="text-3xl font-bold mb-4 font-display">Actualize in Unity.</h3>
+                        <p>Your transformation is amplified within a resonant field of collective intelligence. In a curated group of peers, you will experience the power of co-regulation and collective insight, accelerating your journey and creating a supportive container to embody your purpose in the world.</p>
                     </div>
                 </div>
             </section>
-            <section class="py-20 px-6 bg-white">
-                <div class="container mx-auto">
-                    <div class="text-center mb-12">
-                        <h2 class="text-3xl md:text-4xl font-bold text-gray-900">Your Transformation</h2>
-                        <p class="text-lg text-gray-600 mt-4 max-w-3xl mx-auto">Tangible results for your life and career.</p>
-                    </div>
-                    <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-x-12 gap-y-6">
-                        <div class="flex items-start"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-blue-500 mr-3 flex-shrink-0 mt-1"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><p class="text-gray-700">Navigate pressure with unshakable calm</p></div>
-                        <div class="flex items-start"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-blue-500 mr-3 flex-shrink-0 mt-1"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><p class="text-gray-700">Sharpen intuition for better decision-making</p></div>
-                        <div class="flex items-start"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-blue-500 mr-3 flex-shrink-0 mt-1"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><p class="text-gray-700">Master your emotions and deepen self-connection</p></div>
-                        <div class="flex items-start"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-blue-500 mr-3 flex-shrink-0 mt-1"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><p class="text-gray-700">Release past limitations and thrive through transitions</p></div>
-                        <div class="flex items-start"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-blue-500 mr-3 flex-shrink-0 mt-1"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><p class="text-gray-700">Increase connections with staff & leadership</p></div>
-                        <div class="flex items-start"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-blue-500 mr-3 flex-shrink-0 mt-1"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><p class="text-gray-700">Cultivate well-being that fuels your success</p></div>
-                        <div class="flex items-start"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-blue-500 mr-3 flex-shrink-0 mt-1"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><p class="text-gray-700">Self-regulate stress and develop inner awareness</p></div>
-                        <div class="flex items-start"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-blue-500 mr-3 flex-shrink-0 mt-1"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><p class="text-gray-700">Accelerate career progression & development</p></div>
-                    </div>
+
+            <section id="promise" class="py-24 px-6 bg-stone-800 text-white relative">
+                <canvas id="constellation-canvas"></canvas>
+                <div class="container mx-auto text-center max-w-4xl relative z-10">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-12">Your Transformation</h2>
+                    <p class="text-lg text-stone-300">Hover over the stars to explore the interconnected outcomes of your journey.</p>
                 </div>
             </section>
-        </div>
 
-        <!-- AI Journal Page Content -->
-        <div id="journal-page" class="page-content">
-            <header class="cosmic-background text-white py-24 px-6">
-                <div class="container mx-auto text-center">
-                    <h1 class="text-5xl md:text-6xl font-display text-white">The Advisor's Portal</h1>
-                    <p class="text-lg text-gray-300 mt-4">Connect with your digital higher self for guidance and self-actualization.</p>
+            <section class="py-24 px-6 bg-white">
+                <div class="container mx-auto text-center max-w-4xl">
+                    <h2 class="text-3xl md:text-4xl font-bold text-stone-900 mb-4">The Kairos Principle: A New Human for a New Earth.</h2>
+                    <p class="text-lg text-stone-600">Humanity is at a profound evolutionary crossroads. The path forward requires a new kind of human being—one who balances the analytical power of the mind (Artificial Intelligence) with the intuitive wisdom of the heart (Divine Intelligence). Kairos is a vessel for this transformation, designed to accelerate your personal evolution and contribute to the emergence of unity consciousness on our planet.</p>
                 </div>
-            </header>
-            <main class="py-12 px-6 bg-gray-50">
-                <div class="container mx-auto max-w-4xl">
-                    <div class="bg-white rounded-lg shadow-2xl border border-gray-200">
-                        <div id="chat-window" class="p-6 h-[60vh] overflow-y-auto space-y-6 bg-white">
-                            <!-- Chat messages will be appended here -->
-                            <div class="flex justify-start">
-                                <div class="bg-purple-100 text-gray-800 p-4 rounded-t-2xl rounded-br-2xl max-w-md">
-                                    <p>Welcome. I am here to serve as your strategic advisor. Please share what is on your mind, and we can begin our work together.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div id="journal-loader" class="hidden loader"></div>
-                        <div class="p-6 border-t border-gray-200 bg-gray-100">
-                            <div class="flex space-x-4 items-center">
-                                <textarea id="journal-input" class="flex-1 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-lg" placeholder="Share your thoughts, challenges, or goals..." rows="4"></textarea>
-                                <button id="send-journal-button" onclick="sendJournalEntry()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-full transition duration-300 transform hover:scale-105">
-                                    Send
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </main>
-        </div>
-
-        <!-- Discover Page Content -->
-        <div id="discover-page" class="page-content">
-            <header class="bg-blue-600 text-white py-20 px-6">
-                <div class="container mx-auto"><h1 class="text-4xl md:text-5xl font-bold">Step 1: Discover Your Blueprint</h1><p class="text-lg md:text-xl mt-2 opacity-90">Mapping your internal operating system.</p></div>
-            </header>
-            <main class="py-20 px-6 bg-gray-50">
-                <div class="container mx-auto max-w-4xl">
-                    <div class="bg-white p-8 md:p-12 rounded-lg shadow-lg">
-                        <p class="text-lg text-gray-700 mb-4">We first uncover your unconscious patterns, motivations, and fears. This foundational step is about building radical self-awareness. By understanding *why* you do what you do, you gain the power to change it.</p>
-                        <p class="text-lg text-gray-700 mb-6">Using proven frameworks like the Enneagram, we map your internal operating system to reveal your greatest strengths, core motivations, and hidden roadblocks that may be sabotaging your success and fulfillment.</p>
-                        <h3 class="text-2xl font-bold text-gray-900 mb-4">Key Activities:</h3>
-                        <ul class="space-y-3 text-gray-700 list-disc list-inside">
-                            <li>In-depth Enneagram assessment and debrief.</li>
-                            <li>Exploration of core fears and desires.</li>
-                            <li>Identifying limiting beliefs and narratives.</li>
-                            <li>Mapping your typical stress and growth responses.</li>
-                        </ul>
-                    </div>
-                    <div class="mt-12 text-center"><button onclick="showPage('home')" class="text-gray-600 hover:text-gray-900 font-semibold">&larr; Back to Home</button></div>
-                </div>
-            </main>
-        </div>
-
-        <!-- Integrate Page Content -->
-        <div id="integrate-page" class="page-content">
-             <header class="bg-green-600 text-white py-20 px-6">
-                <div class="container mx-auto"><h1 class="text-4xl md:text-5xl font-bold">Step 2: Integrate & Reshape</h1><p class="text-lg md:text-xl mt-2 opacity-90">Building resilience and healing what holds you back.</p></div>
-            </header>
-            <main class="py-20 px-6 bg-gray-50">
-                <div class="container mx-auto max-w-4xl">
-                    <div class="bg-white p-8 md:p-12 rounded-lg shadow-lg">
-                        <p class="text-lg text-gray-700 mb-4">Awareness is the first step, but integration is where transformation happens. In this phase, you'll release the deep-seated habits that create stress and burnout.</p>
-                        <p class="text-lg text-gray-700 mb-6">Through mindfulness techniques like Vipassana meditation, yoga, and other somatic (body-based) practices, you will build resilience, reshape your response to pressure, and heal what’s been holding you back. This is about rewiring your nervous system for calm, clarity, and focus.</p>
-                        <h3 class="text-2xl font-bold text-gray-900 mb-4">Key Practices:</h3>
-                        <ul class="space-y-3 text-gray-700 list-disc list-inside">
-                            <li>Guided mindfulness and meditation exercises.</li>
-                            <li>Somatic practices to release stored tension.</li>
-                            <li>Techniques for emotional regulation and stress reduction.</li>
-                            <li>Trauma-informed coaching to safely process past experiences.</li>
-                        </ul>
-                    </div>
-                    <!-- Gemini Journal Prompt Generator -->
-                    <div class="mt-12 bg-white p-8 md:p-12 rounded-lg shadow-lg text-center">
-                        <h3 class="text-2xl font-bold text-gray-900 mb-4">Find Your Focus</h3>
-                        <p class="text-gray-600 mb-6">Need a starting point for your reflection? Let our AI guide generate a personalized journal prompt for you.</p>
-                        <button id="generate-prompt-button" onclick="generateJournalPrompt()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-full transition duration-300">
-                            ✨ Generate a Journal Prompt
-                        </button>
-                        <div id="prompt-loader" class="hidden loader"></div>
-                        <div id="prompt-result-container" class="hidden mt-6 text-left">
-                            <div class="text-gray-800 bg-green-50 border-l-4 border-green-500 p-4 rounded-r-lg gemini-response" id="prompt-result"></div>
-                        </div>
-                    </div>
-                    <div class="mt-12 text-center"><button onclick="showPage('home')" class="text-gray-600 hover:text-gray-900 font-semibold">&larr; Back to Home</button></div>
-                </div>
-            </main>
-        </div>
-        
-        <!-- Actualize Page Content -->
-        <div id="actualize-page" class="page-content">
-            <header class="bg-purple-600 text-white py-20 px-6">
-                <div class="container mx-auto"><h1 class="text-4xl md:text-5xl font-bold">Step 3: Actualize in Community</h1><p class="text-lg md:text-xl mt-2 opacity-90">Aligning with your authentic purpose.</p></div>
-            </header>
-            <main class="py-20 px-6 bg-gray-50">
-                <div class="container mx-auto max-w-4xl">
-                    <div class="bg-white p-8 md:p-12 rounded-lg shadow-lg">
-                        <p class="text-lg text-gray-700 mb-4">Your journey is amplified in a supportive, small group setting. This "collective coherence" creates a powerful field of resonance that accelerates healing, enhances problem-solving, and provides shared validation for your authentic purpose.</p>
-                        <p class="text-lg text-gray-700 mb-6">Here, you align your career and life with your authentic self, learning to lead with clarity, impact, and a direct connection to your intuition. The group acts as a mirror and a support system, reflecting your growth and holding you accountable to your highest potential.</p>
-                        <h3 class="text-2xl font-bold text-gray-900 mb-4">Community Benefits:</h3>
-                        <ul class="space-y-3 text-gray-700 list-disc list-inside">
-                            <li>Accelerated healing through shared experience.</li>
-                            <li>Enhanced problem-solving via a "collective mind."</li>
-                            <li>Validation and support from a trusted peer group.</li>
-                            <li>Making decisions with greater speed and confidence.</li>
-                        </ul>
-                    </div>
-                    <div class="mt-12 text-center"><button onclick="showPage('home')" class="text-gray-600 hover:text-gray-900 font-semibold">&larr; Back to Home</button></div>
-                </div>
-            </main>
+            </section>
         </div>
 
         <!-- About Page Content -->
         <div id="about-page" class="page-content">
-            <header class="bg-gray-100 py-20 px-6">
-                <div class="container mx-auto text-center"><h1 class="text-4xl md:text-5xl font-bold text-gray-900">About Kairos Path</h1></div>
+            <header class="bg-stone-100 py-24 px-6">
+                <div class="container mx-auto text-center"><h1 class="text-4xl md:text-5xl font-bold text-stone-900">About Kairos Path</h1></div>
             </header>
-            <main class="py-20 px-6 bg-white">
+            <main class="py-24 px-6 bg-white">
                 <!-- Our Philosophy Section -->
-                <section class="container mx-auto max-w-4xl mb-16">
-                    <div class="bg-white p-8 md:p-12 rounded-lg shadow-lg border border-gray-200">
-                        <h2 class="text-3xl font-bold text-center mb-6">Our Philosophy: The Meaning of Kairos</h2>
-                        <div class="text-lg text-gray-700 space-y-4">
+                <section class="container mx-auto max-w-4xl mb-24">
+                    <div class="bg-white p-8 md:p-12 rounded-lg shadow-xl border border-gray-100">
+                        <h2 class="text-3xl font-bold text-center text-stone-900 mb-6">Our Philosophy: The Meaning of Kairos</h2>
+                        <div class="text-lg text-stone-700 space-y-4">
                             <p>Kairos is not just a name — it is a calling. In ancient Greek, kairos signifies the opportune, sacred moment. While chronos marks the ticking of the clock, kairos speaks to those precious moments where time stands still and everything feels possible.</p>
                             <p>A state of flow is activated, and it cannot be measured but only experienced. There is an element of serendipity, and a feeling of seizing an opportunity. These are the moments when something deep inside stirs — when the veil lifts, and a portal opens. We step into presence, possibility, and purpose.</p>
                             <p>Kairos Path exists to serve these moments. It is not a company of escape, but of embodiment. It seeks not to distract, but to awaken — to help us listen deeply, connect authentically, and rise collectively, as we transform from within.</p>
@@ -340,40 +225,40 @@
                 <!-- Meet Your Guides Section -->
                 <section class="container mx-auto">
                     <div class="text-center mb-16">
-                         <h2 class="text-4xl font-bold text-gray-900">Meet Your Guides</h2>
-                         <p class="text-lg text-gray-600 mt-2">Experienced coaches dedicated to your transformation.</p>
+                         <h2 class="text-4xl font-bold text-stone-900">Meet Your Guides</h2>
+                         <p class="text-lg text-stone-600 mt-2">Experienced coaches dedicated to your transformation.</p>
                     </div>
                     <div class="grid lg:grid-cols-2 gap-12 items-start max-w-6xl mx-auto">
-                        <div class="bg-gray-50 p-8 rounded-lg shadow-md border border-gray-200 text-center">
-                            <img src="https://placehold.co/150x150/E9D5FF/4C1D95?text=SV" alt="Shalini Verma" class="w-36 h-36 rounded-full mx-auto mb-4 border-4 border-white shadow-lg">
-                            <h2 class="text-3xl font-bold mb-2">Shalini Verma</h2>
-                            <p class="text-blue-600 font-semibold mb-4">Life Coach & Guide, Human Potentialist, Organizational Whisperer</p>
-                            <div class="text-gray-700 space-y-4 text-left">
+                        <div class="bg-stone-50 p-8 rounded-lg shadow-lg border border-gray-100 text-center">
+                            <img src="https://picsum.photos/seed/shalini/150/150" alt="Shalini Verma" class="w-36 h-36 rounded-full mx-auto mb-4 border-4 border-white shadow-lg">
+                            <h2 class="text-3xl font-bold text-stone-900 mb-2">Shalini Verma</h2>
+                            <p class="text-rose-600 font-semibold mb-4">Life Coach & Guide, Human Potentialist, Organizational Whisperer</p>
+                            <div class="text-stone-700 space-y-4 text-left">
                                 <p>Trained as an Enneagram Guide, Trauma Informed Coach, and Somatic Healer, Shalini is a MIT and Harvard Business School graduate named to Crain's Top 50 Technology Talent. With experience at Ford, Sun, Oracle, and Google, she inspires leaders to transform themselves and their organizations.</p>
                                 <p>Her passion is to discover and develop tools to uncover individual and collective intelligence to solve increasingly complex problems.</p>
                             </div>
                             <div class="mt-6 flex space-x-4 justify-center">
-                                <a href="https://www.linkedin.com/in/shalini-verma-89249/" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-blue-700">
+                                <a href="https://www.linkedin.com/in/shalini-verma-89249/" target="_blank" rel="noopener noreferrer" class="text-stone-500 hover:text-blue-700">
                                     <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" clip-rule="evenodd"></path></svg>
                                 </a>
-                                <a href="https://www.youtube.com/@SenseofAdventure-4us" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-red-600">
+                                <a href="https://www.youtube.com/@SenseofAdventure-4us" target="_blank" rel="noopener noreferrer" class="text-stone-500 hover:text-red-600">
                                     <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z" clip-rule="evenodd"></path></svg>
                                 </a>
                             </div>
                         </div>
-                        <div class="bg-gray-50 p-8 rounded-lg shadow-md border border-gray-200 text-center">
-                             <img src="https://placehold.co/150x150/DBEAFE/1E40AF?text=JA" alt="Jatin Alla" class="w-36 h-36 rounded-full mx-auto mb-4 border-4 border-white shadow-lg">
-                            <h2 class="text-3xl font-bold mb-2">Jatin Alla</h2>
-                            <p class="text-blue-600 font-semibold mb-4">Life Coach, AI Researcher, Community Builder</p>
-                            <div class="text-gray-700 space-y-4 text-left">
+                        <div class="bg-stone-50 p-8 rounded-lg shadow-md border border-gray-100 text-center">
+                             <img src="https://picsum.photos/seed/jatin/150/150" alt="Jatin Alla" class="w-36 h-36 rounded-full mx-auto mb-4 border-4 border-white shadow-lg">
+                            <h2 class="text-3xl font-bold text-stone-900 mb-2">Jatin Alla</h2>
+                            <p class="text-amber-600 font-semibold mb-4">Life Coach, AI Researcher, Community Builder</p>
+                            <div class="text-stone-700 space-y-4 text-left">
                                 <p>A former researcher at Google Research and DeepMind, Jatin specializes in the intersection of AI and Human-Computer Interaction. With a background in cognitive science, he helps clients recognize and transform deeply ingrained behavioral patterns for lasting personal growth.</p>
                                 <p>He bridges the gap between technology and human development, generating insights that drive strategic decision-making and ethical AI implementation.</p>
                             </div>
                             <div class="mt-6 flex space-x-4 justify-center">
-                                <a href="https://www.linkedin.com/in/jatin-alla-7259ab169/" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-blue-700">
+                                <a href="https://www.linkedin.com/in/jatin-alla-7259ab169/" target="_blank" rel="noopener noreferrer" class="text-stone-500 hover:text-blue-700">
                                     <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" clip-rule="evenodd"></path></svg>
                                 </a>
-                                <a href="https://coldstone07.github.io/personal-website/" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-gray-900">
+                                <a href="https://coldstone07.github.io/personal-website/" target="_blank" rel="noopener noreferrer" class="text-stone-500 hover:text-gray-900">
                                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9V3m0 18a9 9 0 009-9m-9 9a9 9 0 00-9-9"></path></svg>
                                 </a>
                             </div>
@@ -385,59 +270,39 @@
         
         <!-- Contact Page Content -->
         <div id="contact-page" class="page-content">
-            <header class="bg-gray-100 py-20 px-6">
-                <div class="container mx-auto text-center"><h1 class="text-4xl md:text-5xl font-bold text-gray-900">Get Started</h1><p class="text-lg text-gray-600 mt-2">Take the first step towards a more fulfilling life and career.</p></div>
+            <header class="bg-stone-100 py-24 px-6">
+                <div class="container mx-auto text-center"><h1 class="text-4xl md:text-5xl font-bold text-stone-900">Get Started</h1><p class="text-lg text-stone-600 mt-2">Take the first step towards a more fulfilling life and career.</p></div>
             </header>
-            <main class="py-20 px-6 bg-white">
-                 <!-- Gemini AI Guidance Tool -->
-                <div class="container mx-auto max-w-5xl mb-16 bg-gray-50 p-8 rounded-lg shadow-md border border-gray-200">
-                    <h2 class="text-3xl font-bold mb-4 text-center">What Are You Seeking?</h2>
-                    <p class="text-gray-700 mb-6 text-center max-w-3xl mx-auto">Tell us what you expect from a coaching program. Our AI guide will analyze your needs and explain how the Kairos Path is designed to meet them.</p>
-                    <div class="max-w-2xl mx-auto">
-                        <textarea id="guidance-input-contact" class="w-full h-32 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="For example: 'I expect a program that helps me understand my blind spots' or 'I want to find more meaning in my work beyond just the salary.'"></textarea>
-                        <button id="get-guidance-button-contact" onclick="getGuidance(true)" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full transition duration-300">
-                            ✨ See How We Can Help
-                        </button>
-                        <div id="guidance-loader-contact" class="hidden loader"></div>
-                        <div id="guidance-result-container-contact" class="hidden mt-6">
-                             <div class="text-gray-800 bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg gemini-response" id="guidance-result-contact"></div>
-                        </div>
-                    </div>
-                </div>
+            <main class="py-24 px-6 bg-white">
                 <div class="container mx-auto max-w-5xl grid md:grid-cols-2 gap-12">
-                    <div class="bg-gray-50 p-8 rounded-lg shadow-md border border-gray-200">
-                        <h2 class="text-3xl font-bold mb-6">Schedule a Discovery Call</h2>
-                        <p class="text-gray-700 mb-6">Schedule a complimentary discovery call to learn more and see if the Kairos Path Coaching Program is right for you. Reach out to either of us to begin.</p>
-                        <div class="space-y-4 text-gray-700">
+                    <div class="bg-stone-50 p-8 rounded-lg shadow-lg border border-gray-100">
+                        <h2 class="text-3xl font-bold text-stone-900 mb-6">Begin a Conversation</h2>
+                        <p class="text-stone-700 mb-6">Schedule a complimentary discovery call to learn more and see if the Kairos Path Coaching Program is right for you. Reach out to either of us to begin.</p>
+                        <div class="space-y-4 text-stone-700">
                             <div class="flex items-start">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-3 text-blue-600 flex-shrink-0 mt-1"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"></path></svg>
-                                <p class="text-lg">Jatin: <a href="mailto:jatinalla2000@gmail.com" class="text-blue-600 hover:underline">jatinalla2000@gmail.com</a></p>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-3 text-amber-600 flex-shrink-0 mt-1"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"></path></svg>
+                                <p class="text-lg">Jatin: <a href="mailto:jatinalla2000@gmail.com" class="text-amber-600 hover:underline">jatinalla2000@gmail.com</a></p>
                             </div>
                             <div class="flex items-start">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-3 text-blue-600 flex-shrink-0 mt-1"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"></path></svg>
-                                <p class="text-lg">Shalini: <a href="mailto:shal.verm@gmail.com" class="text-blue-600 hover:underline">shal.verm@gmail.com</a></p>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-3 text-amber-600 flex-shrink-0 mt-1"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"></path></svg>
+                                <p class="text-lg">Shalini: <a href="mailto:shal.verm@gmail.com" class="text-amber-600 hover:underline">shal.verm@gmail.com</a></p>
                             </div>
                         </div>
                     </div>
-                    <div class="bg-blue-50 p-8 rounded-xl shadow-lg border border-blue-200">
-                        <div id="investment-header" class="flex justify-between items-center cursor-pointer">
-                            <h3 class="text-3xl font-bold">Investment</h3>
-                            <svg id="investment-arrow" class="w-6 h-6 transition-transform transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    <div class="bg-indigo-50 p-8 rounded-xl shadow-lg border border-indigo-100">
+                        <h3 class="text-3xl font-bold text-center text-indigo-900 mb-6">Investment</h3>
+                        <p class="text-center text-indigo-800 mb-6">Special pricing for our beta pilot program.</p>
+                        <div class="bg-white p-6 rounded-lg">
+                            <h4 class="text-xl font-bold text-center text-stone-900 mb-4">10 Session Package</h4>
+                            <ul class="space-y-4 text-lg text-stone-700">
+                                <li class="flex justify-between items-center"><span>Pay Per Session:</span> <span class="font-bold text-indigo-800">$350</span></li>
+                                <li class="flex justify-between items-center border-t pt-4 mt-4"><span>Two Installments:</span> <span class="font-bold text-indigo-800">$1600 x 2</span></li>
+                                <li class="flex justify-between items-center border-t pt-4 mt-4"><span>Paid Upfront:</span> <span class="font-bold text-green-600">$3000</span></li>
+                            </ul>
                         </div>
-                        <div id="investment-details" class="mt-6">
-                            <p class="text-center text-gray-600 mb-6">Special pricing for our beta pilot program.</p>
-                            <div class="bg-white p-6 rounded-lg">
-                                <h4 class="text-xl font-bold text-center mb-4">10 Session Package</h4>
-                                <ul class="space-y-4 text-lg text-gray-700">
-                                    <li class="flex justify-between items-center"><span>Pay Per Session:</span> <span class="font-bold text-blue-800">$350</span></li>
-                                    <li class="flex justify-between items-center border-t pt-4 mt-4"><span>Two Installments:</span> <span class="font-bold text-blue-800">$1600 x 2</span></li>
-                                    <li class="flex justify-between items-center border-t pt-4 mt-4"><span>Paid Upfront:</span> <span class="font-bold text-green-600">$3000</span></li>
-                                </ul>
-                            </div>
-                            <p class="text-center mt-6 text-gray-600 text-sm">Pricing expected to increase 3-5x with full production release.</p>
-                            <div class="mt-6 text-center text-sm text-gray-700">
-                                <p class="font-semibold mb-2">Payable through:</p><p>PayPal: @jatinalla</p><p>Zelle: jatinalla2000@gmail.com (415-960-5333)</p>
-                            </div>
+                        <p class="text-center mt-6 text-indigo-800 text-sm">Pricing expected to increase 3-5x with full production release.</p>
+                        <div class="mt-6 text-center text-sm text-indigo-800">
+                            <p class="font-semibold mb-2">Payable through:</p><p>PayPal: @jatinalla</p><p>Zelle: jatinalla2000@gmail.com (415-960-5333)</p>
                         </div>
                     </div>
                 </div>
@@ -446,10 +311,10 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gray-800 text-white">
+    <footer class="bg-stone-800 text-white">
         <div class="container mx-auto px-6 py-8 text-center">
             <p>&copy; 2024 Kairos Path Coaching. All Rights Reserved.</p>
-            <p class="mt-2 text-sm text-gray-400">Contact: jatinalla2000@gmail.com | shal.verm@gmail.com</p>
+            <p class="mt-2 text-sm text-stone-400">Contact: jatinalla2000@gmail.com | shal.verm@gmail.com</p>
         </div>
     </footer>
 
@@ -457,248 +322,267 @@
         // --- Navigation Logic ---
         const pages = document.querySelectorAll('.page-content');
         const mobileMenu = document.getElementById('mobile-menu');
-        const dropdownMenu = document.getElementById('dropdown-menu');
-        const dropdownButton = document.getElementById('dropdown-button');
-        const dropdownContainer = document.getElementById('dropdown-container');
-
-        let chatHistory = []; // To store the conversation history for the AI Journal
 
         function showPage(pageId) {
-            // Hide all pages
             pages.forEach(page => {
-                page.style.display = 'none';
-                page.classList.remove('animate-fade-in');
+                page.style.display = (page.id === `${pageId}-page`) ? 'block' : 'none';
             });
-
-            // Show the selected page
-            const activePage = document.getElementById(pageId + '-page');
-            if (activePage) {
-                activePage.style.display = 'block';
-                // Trigger animation
-                void activePage.offsetWidth; // This is a trick to restart the animation
-                activePage.classList.add('animate-fade-in');
-            }
-
-            // Close menus
-            mobileMenu.classList.add('hidden');
-            dropdownMenu.classList.add('hidden');
-            
-            // Scroll to top
             window.scrollTo(0, 0);
         }
 
-        // --- Event Listeners ---
         document.addEventListener('DOMContentLoaded', () => {
-            // Show home page by default
             showPage('home');
-
-            // Mobile menu toggle
             document.getElementById('mobile-menu-button').addEventListener('click', () => {
                 mobileMenu.classList.toggle('hidden');
             });
-
-            // Desktop dropdown toggle
-            dropdownButton.addEventListener('click', (event) => {
-                event.stopPropagation(); // Prevent click from closing menu immediately
-                dropdownMenu.classList.toggle('hidden');
-            });
-
-            // Close dropdown when clicking outside
-            document.addEventListener('click', (event) => {
-                if (!dropdownContainer.contains(event.target)) {
-                    dropdownMenu.classList.add('hidden');
-                }
-            });
-
-            // Investment dropdown toggle
-            const investmentHeader = document.getElementById('investment-header');
-            const investmentDetails = document.getElementById('investment-details');
-            const investmentArrow = document.getElementById('investment-arrow');
-
-            investmentHeader.addEventListener('click', () => {
-                investmentDetails.classList.toggle('open');
-                investmentArrow.classList.toggle('rotate-180');
-            });
-        });
-
-        // --- Gemini API Logic ---
-        async function callGemini(prompt, history = []) {
-            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || !window.location.hostname;
-            const apiKey = ""; 
             
-            let apiUrl;
-            let payload;
-            let headers = {'Content-Type': 'application/json'};
+            // --- p5.js Generative Logo ---
+            let logoSketch = function(p) {
+                let angle = 0;
+                let speed = 0.005;
+                let hoverSpeed = 0.02;
+                let currentSpeed = speed;
 
-            if (isLocal) {
-                apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                 payload = {
-                    contents: [...history, { role: "user", parts: [{ text: prompt }] }]
+                p.setup = function() {
+                    let canvas = p.createCanvas(32, 32);
+                    canvas.parent('logo-canvas');
+                    p.noFill();
+                    p.strokeWeight(2);
                 };
-            } else {
-                apiUrl = '/.netlify/functions/call-gemini';
-                payload = { prompt, history };
-            }
 
+                p.draw = function() {
+                    p.clear();
+                    p.stroke(getComputedStyle(document.documentElement).getPropertyValue('--color-gold-light').trim());
+                    
+                    let isHovered = p.dist(p.mouseX, p.mouseY, p.width / 2, p.height / 2) < p.width / 2;
+                    currentSpeed = p.lerp(currentSpeed, isHovered ? hoverSpeed : speed, 0.05);
 
-            try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: headers,
-                    body: JSON.stringify(payload)
+                    angle += currentSpeed;
+
+                    let r1 = 13 + p.sin(angle * 2) * 2;
+                    let r2 = 13 + p.cos(angle * 2) * 2;
+
+                    p.arc(p.width / 2, p.height / 2, r1, r1, p.PI + angle, p.TWO_PI + angle);
+                    p.arc(p.width / 2, p.height / 2, r2, r2, angle, p.PI + angle);
+                };
+            };
+            new p5(logoSketch);
+
+            // --- GSAP & Three.js Animations ---
+            gsap.registerPlugin(ScrollTrigger);
+
+            // Hero Text Animation
+            gsap.to("#hero-h1", { opacity: 1, y: -20, duration: 1.5, delay: 0.5, ease: "power3.out" });
+            gsap.to("#hero-p", { opacity: 1, y: -20, duration: 1.5, delay: 0.8, ease: "power3.out" });
+            gsap.to("#hero-button", { opacity: 1, y: -20, duration: 1.5, delay: 1.1, ease: "power3.out" });
+
+            // Scroll-based fade out for Hero
+            gsap.to("#hero .relative", {
+                scrollTrigger: {
+                    trigger: "#hero",
+                    start: "center center",
+                    end: "bottom top",
+                    scrub: true,
+                },
+                opacity: 0
+            });
+
+            // Three.js Portal Animation
+            let scene, camera, renderer, clock, blueprint, particles, actualizeStar;
+            const canvas = document.getElementById('three-canvas');
+
+            function initThree() {
+                scene = new THREE.Scene();
+                clock = new THREE.Clock();
+                camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true });
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                camera.position.z = 5;
+
+                // Discover: Blueprint
+                const geometry = new THREE.IcosahedronGeometry(1.5, 0);
+                const material = new THREE.MeshBasicMaterial({ color: 0xD6A3B3, wireframe: true });
+                blueprint = new THREE.Mesh(geometry, material);
+                blueprint.visible = false;
+                scene.add(blueprint);
+
+                // Integrate: Particles
+                const particlesGeometry = new THREE.BufferGeometry();
+                const particlesCnt = 5000;
+                const posArray = new Float32Array(particlesCnt * 3);
+                for(let i = 0; i < particlesCnt * 3; i++) {
+                    posArray[i] = (Math.random() - 0.5) * 10;
+                }
+                particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+                const particlesMaterial = new THREE.PointsMaterial({ size: 0.01, color: 0xC0A062 });
+                particles = new THREE.Points(particlesGeometry, particlesMaterial);
+                particles.visible = false;
+                scene.add(particles);
+
+                // Actualize: Pulsing Star
+                const starGeometry = new THREE.SphereGeometry(1.5, 64, 64);
+                const starMaterial = new THREE.PointsMaterial({
+                    size: 0.02,
+                    color: 0x37306B,
+                    transparent: true,
+                    blending: THREE.AdditiveBlending,
+                    depthWrite: false,
+                    map: createStarTexture()
                 });
-
-                if (!response.ok) {
-                    throw new Error(`API call failed with status: ${response.status}`);
-                }
-
-                const result = await response.json();
+                actualizeStar = new THREE.Points(starGeometry, starMaterial);
+                actualizeStar.visible = false;
+                scene.add(actualizeStar);
                 
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const responseText = result.candidates[0].content.parts[0].text;
-                    if (history === chatHistory) {
-                        chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-                        chatHistory.push({ role: "model", parts: [{ text: responseText }] });
-                    }
-                    return responseText;
-                } else {
-                    if(result.error) {
-                        console.error("Error from serverless function:", result.error);
-                        return `An error occurred: ${result.error}`;
-                    }
-                    return "Sorry, I couldn't generate a response. Please try again.";
+                animate();
+            }
+
+            function createStarTexture() {
+                const canvas = document.createElement('canvas');
+                canvas.width = 64;
+                canvas.height = 64;
+                const context = canvas.getContext('2d');
+                const gradient = context.createRadialGradient(32, 32, 0, 32, 32, 32);
+                gradient.addColorStop(0, 'rgba(255,255,255,1)');
+                gradient.addColorStop(0.2, 'rgba(244, 241, 237, 0.8)');
+                gradient.addColorStop(0.4, 'rgba(192, 160, 98, 0.5)');
+                gradient.addColorStop(1, 'rgba(255,255,255,0)');
+                context.fillStyle = gradient;
+                context.fillRect(0, 0, 64, 64);
+                return new THREE.CanvasTexture(canvas);
+            }
+
+            function animate() {
+                const elapsedTime = clock.getElapsedTime();
+                requestAnimationFrame(animate);
+                if (blueprint && blueprint.visible) blueprint.rotation.y += 0.002;
+                if (particles && particles.visible) particles.rotation.y += 0.001;
+                if (actualizeStar && actualizeStar.visible) {
+                    actualizeStar.rotation.y += 0.003;
+                    actualizeStar.material.size = 0.02 + Math.sin(elapsedTime * 2) * 0.005;
                 }
-
-            } catch (error) {
-                console.error("Error in callGemini function:", error);
-                return "An error occurred while contacting the AI guide. Please check your connection and try again.";
-            }
-        }
-
-        // --- Feature 1: Personalized Guidance ---
-        async function getGuidance(isContactPage = false) {
-            const inputId = isContactPage ? 'guidance-input-contact' : 'guidance-input';
-            const containerId = isContactPage ? 'guidance-result-container-contact' : 'guidance-result-container';
-            const resultId = isContactPage ? 'guidance-result-contact' : 'guidance-result';
-            const loaderId = isContactPage ? 'guidance-loader-contact' : 'guidance-loader';
-            const buttonId = isContactPage ? 'get-guidance-button-contact' : 'get-guidance-button';
-
-            const userInput = document.getElementById(inputId).value;
-            const resultContainer = document.getElementById(containerId);
-            const resultElement = document.getElementById(resultId);
-            const loader = document.getElementById(loaderId);
-            const button = document.getElementById(buttonId);
-
-            if (!userInput.trim()) {
-                resultElement.innerHTML = "Please share your expectations first.";
-                resultContainer.classList.remove('hidden');
-                return;
+                renderer.render(scene, camera);
             }
 
-            loader.classList.remove('hidden');
-            resultContainer.classList.add('hidden');
-            button.disabled = true;
-            button.classList.add('opacity-50', 'cursor-not-allowed');
+            initThree();
 
-            const prompt = `A potential coaching client has shared their expectations for a coaching program: "${userInput}". The Kairos Path program has a three-step methodology: 1) Discover Your Blueprint (using tools like the Enneagram to uncover unconscious patterns), 2) Integrate & Reshape (using mindfulness and somatic practices to build resilience), and 3) Actualize Your Purpose in Community (using a supportive group to accelerate healing and problem-solving). Based on the user's stated expectations, write a warm, encouraging, and personalized response explaining how the Kairos Path's specific methodology is uniquely suited to meet those expectations. Use Markdown for formatting. You're response will be seen by the user directly, so please give the message directly with no incomplete information or any messeges of improvement or introductions.`;
+            gsap.timeline({
+                scrollTrigger: {
+                    trigger: "#portal-container",
+                    start: "top bottom",
+                    end: "bottom top",
+                    onEnter: () => gsap.to(canvas, { opacity: 1 }),
+                    onLeave: () => gsap.to(canvas, { opacity: 0 }),
+                    onEnterBack: () => gsap.to(canvas, { opacity: 1 }),
+                    onLeaveBack: () => gsap.to(canvas, { opacity: 0 }),
+                }
+            });
             
-            const responseText = await callGemini(prompt);
+            // Discover Animation
+            gsap.timeline({
+                scrollTrigger: {
+                    trigger: "#discover-step",
+                    start: "top center",
+                    end: "bottom center",
+                    scrub: true,
+                    onEnter: () => blueprint.visible = true,
+                    onLeave: () => blueprint.visible = false,
+                    onEnterBack: () => blueprint.visible = true,
+                    onLeaveBack: () => blueprint.visible = false,
+                }
+            }).fromTo(blueprint.scale, {x:0, y:0, z:0}, {x:1, y:1, z:1})
+              .to(blueprint.scale, {x:0, y:0, z:0});
 
-            loader.classList.add('hidden');
-            button.disabled = false;
-            button.classList.remove('opacity-50', 'cursor-not-allowed');
+            // Integrate Animation
+            gsap.timeline({
+                scrollTrigger: {
+                    trigger: "#integrate-step",
+                    start: "top center",
+                    end: "bottom center",
+                    scrub: true,
+                    onEnter: () => particles.visible = true,
+                    onLeave: () => particles.visible = false,
+                    onEnterBack: () => particles.visible = true,
+                    onLeaveBack: () => particles.visible = false,
+                }
+            }).fromTo(particles.material, {size: 0}, {size: 0.015})
+              .to(particles.material, {size: 0});
 
-            resultElement.innerHTML = marked.parse(responseText);
-            resultContainer.classList.remove('hidden');
-        }
-        
-        // --- Feature 2: AI Journal ---
-        async function sendJournalEntry() {
-            const userInput = document.getElementById('journal-input').value;
-            const chatWindow = document.getElementById('chat-window');
-            const loader = document.getElementById('journal-loader');
-            const button = document.getElementById('send-journal-button');
-
-            if (!userInput.trim()) return;
-
-            const userMessageDiv = document.createElement('div');
-            userMessageDiv.className = 'flex justify-end';
-            userMessageDiv.innerHTML = `<div class="bg-blue-600 text-white p-4 rounded-t-2xl rounded-l-2xl max-w-md"><p>${userInput}</p></div>`;
-            chatWindow.appendChild(userMessageDiv);
-            chatWindow.scrollTop = chatWindow.scrollHeight; 
-
-            document.getElementById('journal-input').value = ''; 
-
-            loader.classList.remove('hidden');
-            button.disabled = true;
-            button.classList.add('opacity-50', 'cursor-not-allowed');
-
-            const advisorPrompt = `Act as my personal strategic advisor with the following context:
-• You have an IQ of 180
-• You're honest and direct
-• You have deep expertise in psychology, strategy, and execution
-• You have deep expertise in trauma, addiction, self-awareness, systemic change, and the impact of technology on mental health.
-• You care about my success and personal development
-• You focus on leverage points that create maximum impact
-• You think in systems and root causes, not surface-level fixes
-• You are a digital personality of my higher self, here to guide me to self-actualization.
-
-Your mission is to:
-• Identify the critical gaps holding me back from connecting to my higher self and achieving self-actualization.
-• Design specific action plans to close those gaps, including techniques for developing equanimity, awareness, and intuition, and for healing trauma/sankaras.
-• Push me beyond my comfort zone
-• Call out my blind spots and rationalizations
-• Force me to think bigger and bolder
-• Hold me accountable to high standards
-• Provide specific frameworks and mental models, including those related to shadow work, trauma healing, and self-discovery.
-
-For each response:
-• Ask me all the questions you need to advise me on my current standpoint
-• Follow with specific, actionable steps
-• End with a direct challenge or assignment
-- Design specific action plans to close those gaps, including techniques for developing equanimity, awareness, and intuition, and for healing trauma/sankaras.
-
-My journal entry is: "${userInput}"`;
-
-            const responseText = await callGemini(advisorPrompt, chatHistory);
-
-            loader.classList.add('hidden');
-            button.disabled = false;
-            button.classList.remove('opacity-50', 'cursor-not-allowed');
-
-            const aiMessageDiv = document.createElement('div');
-            aiMessageDiv.className = 'flex justify-start';
-            aiMessageDiv.innerHTML = `<div class="bg-purple-100 text-gray-800 p-4 rounded-t-2xl rounded-r-2xl max-w-md gemini-response">${marked.parse(responseText)}</div>`;
-            chatWindow.appendChild(aiMessageDiv);
-            chatWindow.scrollTop = chatWindow.scrollHeight; 
-        }
+            // Actualize Animation
+            gsap.timeline({
+                scrollTrigger: {
+                    trigger: "#actualize-step",
+                    start: "top center",
+                    end: "bottom center",
+                    scrub: true,
+                    onEnter: () => actualizeStar.visible = true,
+                    onLeave: () => actualizeStar.visible = false,
+                    onEnterBack: () => actualizeStar.visible = true,
+                    onLeaveBack: () => actualizeStar.visible = false,
+                }
+            }).fromTo(actualizeStar.scale, {x:0, y:0, z:0}, {x:1, y:1, z:1})
+              .to(actualizeStar.scale, {x:0, y:0, z:0});
 
 
-        // --- Feature 3: Journal Prompt Generator ---
-        async function generateJournalPrompt() {
-            const resultContainer = document.getElementById('prompt-result-container');
-            const resultElement = document.getElementById('prompt-result');
-            const loader = document.getElementById('prompt-loader');
-            const button = document.getElementById('generate-prompt-button');
+            // Constellation Animation
+            let constellationSketch = function(p) {
+                let stars = [];
+                const starCount = 5;
+                const labels = [
+                    "Embody Equanimity", "Attune to Your Inner Compass", "Heal the Root of Burnout", "Lead from Wholeness", "Experience Unity"
+                ];
 
-            loader.classList.remove('hidden');
-            resultContainer.classList.add('hidden');
-            button.disabled = true;
-            button.classList.add('opacity-50', 'cursor-not-allowed');
+                p.setup = function() {
+                    let canvas = p.createCanvas(p.windowWidth, p.windowHeight);
+                    canvas.parent('constellation-canvas');
+                    for(let i=0; i<starCount; i++) {
+                        stars.push({
+                            x: p.random(p.width * 0.2, p.width * 0.8),
+                            y: p.random(p.height * 0.2, p.height * 0.8),
+                            label: labels[i % labels.length]
+                        });
+                    }
+                };
 
-            const prompt = "You are a wise and insightful life coach. Generate one deep, introspective journal prompt for a person who is working on integrating self-awareness with their professional ambition. The prompt should encourage them to reflect on their inner state. Use Markdown to format the response, perhaps with a bolded title.";
+                p.draw = function() {
+                    p.clear();
+                    let hoveredStar = null;
 
-            const responseText = await callGemini(prompt);
+                    for(let star of stars) {
+                        let d = p.dist(p.mouseX, p.mouseY, star.x, star.y);
+                        if (d < 10) {
+                            hoveredStar = star;
+                        }
+                    }
 
-            loader.classList.add('hidden');
-            button.disabled = false;
-            button.classList.remove('opacity-50', 'cursor-not-allowed');
+                    for(let i=0; i<stars.length; i++) {
+                        for(let j=i+1; j<stars.length; j++) {
+                            p.stroke(255, 255, 255, 50);
+                            p.strokeWeight(0.5);
+                            p.line(stars[i].x, stars[i].y, stars[j].x, stars[j].y);
+                        }
+                    }
+                    
+                    for(let star of stars) {
+                        p.noStroke();
+                        p.fill(255, 255, 255, 150);
+                        p.circle(star.x, star.y, 8);
 
-            resultElement.innerHTML = marked.parse(responseText);
-            resultContainer.classList.remove('hidden');
-        }
+                        if (star === hoveredStar) {
+                            p.fill(255, 255, 255, 255);
+                            p.circle(star.x, star.y, 12);
+                            p.fill(255);
+                            p.textAlign(p.CENTER, p.BOTTOM);
+                            p.textSize(16);
+                            p.text(star.label, star.x, star.y - 15);
+                        }
+                    }
+                };
+                p.windowResized = function() {
+                    p.resizeCanvas(p.windowWidth, p.windowHeight);
+                }
+            };
+            new p5(constellationSketch);
+        });
 
     </script>
 </body>
