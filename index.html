@@ -52,14 +52,25 @@
             opacity: 0;
             transition: opacity 0.5s ease-in-out;
         }
+        #portal-container {
+            position: relative;
+            height: 300vh; /* Give space for the scroll animation */
+        }
         .portal-step {
-            height: 100vh;
+            /* Full screen, stacked on top of each other */
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh; /* Each step takes a full viewport height */
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--color-text);
-            position: relative;
             z-index: 2;
+            /* Visibility controlled by GSAP */
+            opacity: 0;
+            visibility: hidden;
         }
         
         @keyframes pulse-glow {
@@ -368,85 +379,93 @@
                              <h2 class="text-3xl font-bold text-[var(--color-base)] font-display mb-2">A 10-Week Adventure in Transformation</h2>
                              <p class="text-lg text-gray-600">Each week builds upon the last, creating a powerful momentum of insight and integration.</p>
                         </div>
-                        <div class="space-y-8">
-                            <!-- Week 1 -->
-                            <div class="flex items-start space-x-6">
-                                <div class="flex-shrink-0 text-2xl font-display text-[var(--color-accent)] bg-stone-100 rounded-full w-16 h-16 flex items-center justify-center">Wk 1</div>
-                                <div>
-                                    <h3 class="text-2xl font-bold font-display mb-1">The Pattern Spotting Game</h3>
-                                    <p class="text-lg"><strong>Approach:</strong> Discover your core unconscious patterns not as flaws, but as fascinating clues on your unique treasure map. We begin with delight and curiosity, celebrating each discovery as an archaeologist would an ancient artifact.</p>
+                        <div class="space-y-12">
+                            <!-- Part 1 -->
+                            <div>
+                                <h3 class="text-2xl font-display text-center mb-6 border-b-2 border-[var(--color-accent)] pb-2">Part I: Discover Your Essential Blueprint</h3>
+                                <div class="space-y-8 mt-6">
+                                    <div class="flex items-start space-x-6">
+                                        <div class="flex-shrink-0 text-2xl font-display text-[var(--color-accent)] bg-stone-100 rounded-full w-16 h-16 flex items-center justify-center">Wk 1</div>
+                                        <div>
+                                            <h4 class="text-xl font-bold font-display mb-1">The Pattern Spotting Game</h4>
+                                            <p class="text-lg"><strong>Approach:</strong> Discover your core unconscious patterns not as flaws, but as fascinating clues on your unique treasure map. We begin with delight and curiosity, celebrating each discovery as an archaeologist would an ancient artifact.</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start space-x-6">
+                                        <div class="flex-shrink-0 text-2xl font-display text-[var(--color-accent)] bg-stone-100 rounded-full w-16 h-16 flex items-center justify-center">Wk 2</div>
+                                        <div>
+                                            <h4 class="text-xl font-bold font-display mb-1">Dancing with Dragons</h4>
+                                            <p class="text-lg"><strong>Approach:</strong> Learn to meet your resistance, fears, and inner critics. We discover how to dance with this energy—neither fighting nor fleeing—transmuting it from a source of fear into a source of power and resilience.</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start space-x-6">
+                                        <div class="flex-shrink-0 text-2xl font-display text-[var(--color-accent)] bg-stone-100 rounded-full w-16 h-16 flex items-center justify-center">Wk 3</div>
+                                        <div>
+                                            <h4 class="text-xl font-bold font-display mb-1">The Alchemical Moment</h4>
+                                            <p class="text-lg"><strong>Approach:</strong> Practice catching your patterns in real-time. This is where true magic happens—not in achieving perfection, but in cultivating aware presence in the moment of choice, transforming reactions into conscious responses.</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <!-- Week 2 -->
-                            <div class="flex items-start space-x-6">
-                                <div class="flex-shrink-0 text-2xl font-display text-[var(--color-accent)] bg-stone-100 rounded-full w-16 h-16 flex items-center justify-center">Wk 2</div>
-                                <div>
-                                    <h3 class="text-2xl font-bold font-display mb-1">Dancing with Dragons</h3>
-                                    <p class="text-lg"><strong>Approach:</strong> Learn to meet your resistance, fears, and inner critics. We discover how to dance with this energy—neither fighting nor fleeing—transmuting it from a source of fear into a source of power and resilience.</p>
+                            <!-- Part 2 -->
+                            <div>
+                                <h3 class="text-2xl font-display text-center mb-6 border-b-2 border-[var(--color-accent)] pb-2">Part II: Integrate the Fractured Self</h3>
+                                <div class="space-y-8 mt-6">
+                                     <div class="flex items-start space-x-6">
+                                        <div class="flex-shrink-0 text-2xl font-display text-[var(--color-accent)] bg-stone-100 rounded-full w-16 h-16 flex items-center justify-center">Wk 4</div>
+                                        <div>
+                                            <h4 class="text-xl font-bold font-display mb-1">Somatic Superpowers</h4>
+                                            <p class="text-lg"><strong>Approach:</strong> Learn to trust your body's wisdom over your mind's stories. Through guided somatic practices, you'll tap into the cellular intelligence that holds the key to deep, lasting integration and wholeness.</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start space-x-6">
+                                        <div class="flex-shrink-0 text-2xl font-display text-[var(--color-accent)] bg-stone-100 rounded-full w-16 h-16 flex items-center justify-center">Wk 5</div>
+                                        <div>
+                                            <h4 class="text-xl font-bold font-display mb-1">Mindfulness Mastery</h4>
+                                            <p class="text-lg"><strong>Approach:</strong> Develop a sustainable mindfulness practice that fits your life. We hold space for both the beauty and the difficulty, honoring resistance as a natural part of the journey to unshakable presence.</p>
+                                        </div>
+                                    </div>
+                                     <div class="flex items-start space-x-6">
+                                        <div class="flex-shrink-0 text-2xl font-display text-[var(--color-accent)] bg-stone-100 rounded-full w-16 h-16 flex items-center justify-center">Wk 6</div>
+                                        <div>
+                                            <h4 class="text-xl font-bold font-display mb-1">Meeting Your Inner Family</h4>
+                                            <p class="text-lg"><strong>Approach:</strong> Create a safe inner container to welcome all parts of yourself, especially those that have been exiled or shamed. By responding with respect and curiosity, we cultivate inner unity—the foundation of authentic leadership.</p>
+                                        </div>
+                                    </div>
+                                     <div class="flex items-start space-x-6">
+                                        <div class="flex-shrink-0 text-2xl font-display text-[var(--color-accent)] bg-stone-100 rounded-full w-16 h-16 flex items-center justify-center">Wk 7</div>
+                                        <div>
+                                            <h4 class="text-xl font-bold font-display mb-1">The Great Reframe</h4>
+                                            <p class="text-lg"><strong>Approach:</strong> Discover that changing your perspective isn't about "positive thinking," but about seeing a fuller, more complete truth. We practice holding multiple perspectives to unlock creative solutions and deeper wisdom.</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <!-- Week 3 -->
-                            <div class="flex items-start space-x-6">
-                                <div class="flex-shrink-0 text-2xl font-display text-[var(--color-accent)] bg-stone-100 rounded-full w-16 h-16 flex items-center justify-center">Wk 3</div>
-                                <div>
-                                    <h3 class="text-2xl font-bold font-display mb-1">The Alchemical Moment</h3>
-                                    <p class="text-lg"><strong>Approach:</strong> Practice catching your patterns in real-time. This is where true magic happens—not in achieving perfection, but in cultivating aware presence in the moment of choice, transforming reactions into conscious responses.</p>
-                                </div>
-                            </div>
-                             <!-- Week 4 -->
-                            <div class="flex items-start space-x-6">
-                                <div class="flex-shrink-0 text-2xl font-display text-[var(--color-accent)] bg-stone-100 rounded-full w-16 h-16 flex items-center justify-center">Wk 4</div>
-                                <div>
-                                    <h3 class="text-2xl font-bold font-display mb-1">Somatic Superpowers</h3>
-                                    <p class="text-lg"><strong>Approach:</strong> Learn to trust your body's wisdom over your mind's stories. Through guided somatic practices, you'll tap into the cellular intelligence that holds the key to deep, lasting integration and wholeness.</p>
-                                </div>
-                            </div>
-                            <!-- Week 5 -->
-                            <div class="flex items-start space-x-6">
-                                <div class="flex-shrink-0 text-2xl font-display text-[var(--color-accent)] bg-stone-100 rounded-full w-16 h-16 flex items-center justify-center">Wk 5</div>
-                                <div>
-                                    <h3 class="text-2xl font-bold font-display mb-1">Mindfulness Mastery</h3>
-                                    <p class="text-lg"><strong>Approach:</strong> Develop a sustainable mindfulness practice that fits your life. We hold space for both the beauty and the difficulty, honoring resistance as a natural part of the journey to unshakable presence.</p>
-                                </div>
-                            </div>
-                            <!-- Week 6 -->
-                             <div class="flex items-start space-x-6">
-                                <div class="flex-shrink-0 text-2xl font-display text-[var(--color-accent)] bg-stone-100 rounded-full w-16 h-16 flex items-center justify-center">Wk 6</div>
-                                <div>
-                                    <h3 class="text-2xl font-bold font-display mb-1">Meeting Your Inner Family</h3>
-                                    <p class="text-lg"><strong>Approach:</strong> Create a safe inner container to welcome all parts of yourself, especially those that have been exiled or shamed. By responding with respect and curiosity, we cultivate inner unity—the foundation of authentic leadership.</p>
-                                </div>
-                            </div>
-                             <!-- Week 7 -->
-                             <div class="flex items-start space-x-6">
-                                <div class="flex-shrink-0 text-2xl font-display text-[var(--color-accent)] bg-stone-100 rounded-full w-16 h-16 flex items-center justify-center">Wk 7</div>
-                                <div>
-                                    <h3 class="text-2xl font-bold font-display mb-1">The Great Reframe</h3>
-                                    <p class="text-lg"><strong>Approach:</strong> Discover that changing your perspective isn't about "positive thinking," but about seeing a fuller, more complete truth. We practice holding multiple perspectives to unlock creative solutions and deeper wisdom.</p>
-                                </div>
-                            </div>
-                            <!-- Week 8 -->
-                            <div class="flex items-start space-x-6">
-                                <div class="flex-shrink-0 text-2xl font-display text-[var(--color-accent)] bg-stone-100 rounded-full w-16 h-16 flex items-center justify-center">Wk 8</div>
-                                <div>
-                                    <h3 class="text-2xl font-bold font-display mb-1">Anchoring the Field</h3>
-                                    <p class="text-lg"><strong>Approach:</strong> Learn to cultivate and anchor a field of coherence—a state of inner alignment that positively and measurably influences your teams, your family, and your environment. This is where personal change becomes systemic impact.</p>
-                                </div>
-                            </div>
-                            <!-- Week 9 -->
-                            <div class="flex items-start space-x-6">
-                                <div class="flex-shrink-0 text-2xl font-display text-[var(--color-accent)] bg-stone-100 rounded-full w-16 h-16 flex items-center justify-center">Wk 9</div>
-                                <div>
-                                    <h3 class="text-2xl font-bold font-display mb-1">The Power of We</h3>
-                                    <p class="text-lg"><strong>Approach:</strong> Explore the dynamics of co-regulation and collective intelligence. You will learn to lead and create from a place of profound connection, leveraging the group's wisdom to solve complex challenges.</p>
-                                </div>
-                            </div>
-                            <!-- Week 10 -->
-                            <div class="flex items-start space-x-6">
-                                <div class="flex-shrink-0 text-2xl font-display text-[var(--color-accent)] bg-stone-100 rounded-full w-16 h-16 flex items-center justify-center">Wk 10</div>
-                                <div>
-                                    <h3 class="text-2xl font-bold font-display mb-1">Emergence & Evolution</h3>
-                                    <p class="text-lg"><strong>Approach:</strong> Present your Kairos Capstone—not as an end, but as the seed of your next chapter. We witness and bless the unique gift you are now ready to plant in the world, celebrating the beginning of your real adventure.</p>
+                            <!-- Part 3 -->
+                            <div>
+                                <h3 class="text-2xl font-display text-center mb-6 border-b-2 border-[var(--color-accent)] pb-2">Part III: Actualize in Unity</h3>
+                                <div class="space-y-8 mt-6">
+                                    <div class="flex items-start space-x-6">
+                                        <div class="flex-shrink-0 text-2xl font-display text-[var(--color-accent)] bg-stone-100 rounded-full w-16 h-16 flex items-center justify-center">Wk 8</div>
+                                        <div>
+                                            <h4 class="text-xl font-bold font-display mb-1">Anchoring the Field</h4>
+                                            <p class="text-lg"><strong>Approach:</strong> Learn to cultivate and anchor a field of coherence—a state of inner alignment that positively and measurably influences your teams, your family, and your environment. This is where personal change becomes systemic impact.</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start space-x-6">
+                                        <div class="flex-shrink-0 text-2xl font-display text-[var(--color-accent)] bg-stone-100 rounded-full w-16 h-16 flex items-center justify-center">Wk 9</div>
+                                        <div>
+                                            <h4 class="text-xl font-bold font-display mb-1">The Power of We</h4>
+                                            <p class="text-lg"><strong>Approach:</strong> Explore the dynamics of co-regulation and collective intelligence. You will learn to lead and create from a place of profound connection, leveraging the group's wisdom to solve complex challenges.</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start space-x-6">
+                                        <div class="flex-shrink-0 text-2xl font-display text-[var(--color-accent)] bg-stone-100 rounded-full w-16 h-16 flex items-center justify-center">Wk 10</div>
+                                        <div>
+                                            <h4 class="text-xl font-bold font-display mb-1">Emergence & Evolution</h4>
+                                            <p class="text-lg"><strong>Approach:</strong> Present your Kairos Capstone—not as an end, but as the seed of your next chapter. We witness and bless the unique gift you are now ready to plant in the world, celebrating the beginning of your real adventure.</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -812,6 +831,10 @@
             function setupScrollAnimations() {
                 gsap.registerPlugin(ScrollTrigger);
 
+                const discoverContent = document.querySelector('#discover-step');
+                const integrateContent = document.querySelector('#integrate-step');
+                const actualizeContent = document.querySelector('#actualize-step');
+
                 // Fade in/out the canvas
                 ScrollTrigger.create({
                     trigger: portalContainer,
@@ -823,23 +846,6 @@
                     onLeaveBack: () => gsap.to(threeCanvas, { opacity: 0, duration: 1 }),
                 });
 
-                // Animate text content
-                gsap.utils.toArray('.portal-step').forEach((step, i) => {
-                    const content = step.querySelector('.content');
-                    gsap.fromTo(content, 
-                        { autoAlpha: 0, y: 50 },
-                        {
-                            autoAlpha: 1, y: 0, duration: 1,
-                            scrollTrigger: {
-                                trigger: step,
-                                start: 'top center+=100',
-                                end: 'bottom bottom',
-                                toggleActions: 'play reverse play reverse',
-                            }
-                        }
-                    );
-                });
-
                 // Main morphing animation timeline
                 const morphTl = gsap.timeline({
                     scrollTrigger: {
@@ -847,35 +853,44 @@
                         pin: true,
                         scrub: 1,
                         start: 'top top',
-                        end: '+=300%' // 3 sections = 300%
+                        end: '+=200%' // 3 sections, but we scroll for 2 full viewports after the first
                     }
                 });
+
+                // Step 1: Discover
+                morphTl.to(discoverContent, { autoAlpha: 1, duration: 0.5 });
+                morphTl.to(discoverContent, { autoAlpha: 0, duration: 0.5 }, "+=0.5"); // Show for a bit, then fade out
 
                 // Morph: Discover -> Integrate
                 morphTl.to(particles.geometry.attributes.position.array, {
                     endArray: integratePositions,
                     duration: 1,
                     ease: 'power1.inOut',
-                    onUpdate: () => {
-                        particles.geometry.attributes.position.needsUpdate = true;
-                    }
-                }, 0); // Start at time 0
+                    onUpdate: () => { particles.geometry.attributes.position.needsUpdate = true; }
+                }, "<"); // Start at the same time as discover fades out
+
+                // Step 2: Integrate
+                morphTl.to(integrateContent, { autoAlpha: 1, duration: 0.5 }, "-=0.5"); // Fade in as morph happens
+                morphTl.to(integrateContent, { autoAlpha: 0, duration: 0.5 }, "+=0.5");
 
                 // Morph: Integrate -> Actualize
                 morphTl.to(particles.geometry.attributes.position.array, {
                     endArray: actualizePositions,
                     duration: 1,
                     ease: 'power2.inOut',
-                    onUpdate: () => {
-                        particles.geometry.attributes.position.needsUpdate = true;
-                    }
-                }, 1); // Start at time 1
+                    onUpdate: () => { particles.geometry.attributes.position.needsUpdate = true; }
+                }, "<");
+
+                // Step 3: Actualize
+                morphTl.to(actualizeContent, { autoAlpha: 1, duration: 0.5 }, "-=0.5");
+                morphTl.to(actualizeContent, { autoAlpha: 0, duration: 0.5 }, "+=0.5");
+
 
                 // Control particle size and opacity during transitions
-                morphTl.to(particles.material, { size: 0.05, duration: 0.5 }, 0.5); // Grow during expansion
-                morphTl.to(particles.material, { size: 0.025, duration: 0.5 }, 1); // Shrink back
-                morphTl.to(particles.material, { size: 0.1, duration: 0.5 }, 1.5); // Pulse at center
-                morphTl.to(particles.material, { size: 0.01, opacity: 0, duration: 0.5 }, 2); // Fade out at the end
+                morphTl.to(particles.material, { size: 0.05, duration: 0.5 }, 0.75);
+                morphTl.to(particles.material, { size: 0.025, duration: 0.5 }, 1.5);
+                morphTl.to(particles.material, { size: 0.1, duration: 0.5 }, 2);
+                morphTl.to(particles.material, { opacity: 0, duration: 0.5 }, 2.5);
             }
 
             if (portalContainer) {
