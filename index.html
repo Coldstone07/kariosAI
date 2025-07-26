@@ -65,11 +65,11 @@
         @keyframes pulse-glow {
             0%, 100% {
                 border-color: rgba(240, 243, 245, 0.1);
-                box-shadow: 0 0 5px rgba(240, 243, 245, 0.1);
+                box-shadow: 0 0 8px rgba(240, 243, 245, 0.1);
             }
             50% {
-                border-color: rgba(240, 243, 245, 0.3);
-                box-shadow: 0 0 15px rgba(148, 166, 226, 0.3);
+                border-color: rgba(240, 243, 245, 0.4);
+                box-shadow: 0 0 25px rgba(148, 166, 226, 0.4);
             }
         }
 
@@ -80,9 +80,12 @@
             backdrop-filter: blur(10px);
             border-radius: 1rem;
             border: 1px solid rgba(240, 243, 245, 0.1); /* Using text color with alpha */
-            animation: pulse-glow 4s ease-in-out infinite;
+            animation: pulse-glow 5s ease-in-out infinite;
         }
         
+        #portal-container .portal-step:nth-child(2) .content { animation-delay: 0.5s; }
+        #portal-container .portal-step:nth-child(3) .content { animation-delay: 1s; }
+
         @keyframes dawn-gradient {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
@@ -120,6 +123,18 @@
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 1000;
+        }
+        /* Tab Styles */
+        .tab-button {
+            transition: all 0.3s ease;
+        }
+        .tab-button.active {
+            color: var(--color-base);
+            background-color: white;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .tab-panel {
+            display: none;
         }
     </style>
 </head>
@@ -201,7 +216,7 @@
                 <canvas id="three-canvas"></canvas>
                 <div id="discover-step" class="portal-step">
                     <div class="content">
-                        <h3 class="text-3xl font-bold mb-4 font-display">Discover Your Essential Blueprint.</h3>
+                        <h3 class="text-3xl font-bold mb-4 font-display">1. Discover Your Essential Blueprint.</h3>
                         <p>Using profound tools like the 
                             <span class="font-semibold text-[var(--color-accent)]">Enneagram</span><span class="concept-info" data-concept="enneagram">ⓘ</span>
                              and the 
@@ -211,7 +226,7 @@
                 </div>
                 <div id="integrate-step" class="portal-step">
                     <div class="content">
-                        <h3 class="text-3xl font-bold mb-4 font-display">Integrate the Fractured Self.</h3>
+                        <h3 class="text-3xl font-bold mb-4 font-display">2. Integrate the Fractured Self.</h3>
                         <p>Awareness is the first step; embodiment is the key to lasting change. Through trauma-informed somatic practices and deep mindfulness, you will learn to release the 
                             <span class="font-semibold text-[var(--color-accent)]">sankaras</span><span class="concept-info" data-concept="sankaras">ⓘ</span>—the
                              deep-seated energetic knots—that create stress and burnout. This is not about managing your nervous system; it is about fundamentally rewiring it for wholeness.</p>
@@ -219,7 +234,7 @@
                 </div>
                 <div id="actualize-step" class="portal-step">
                     <div class="content">
-                        <h3 class="text-3xl font-bold mb-4 font-display">Actualize in Unity.</h3>
+                        <h3 class="text-3xl font-bold mb-4 font-display">3. Actualize in Unity.</h3>
                         <p>Your transformation is amplified within a resonant field of collective intelligence. In a curated group of peers, you will experience the power of co-regulation and collective insight, accelerating your journey and creating a supportive container to embody your purpose in the world.</p>
                     </div>
                 </div>
@@ -257,7 +272,7 @@
                     </div>
                     <div class="grid lg:grid-cols-2 gap-12 items-start max-w-6xl mx-auto">
                         <div class="bg-stone-50 p-8 rounded-lg shadow-lg border border-gray-100 text-center">
-                            <img src="https://i.pravatar.cc/150?u=shalini" alt="Shalini Verma" class="w-36 h-36 rounded-full mx-auto mb-4 border-4 border-white shadow-lg" onerror="this.onerror=null;this.src='https://placehold.co/150x150/D6A3B3/FFFFFF?text=SV';">
+                            <img src="./Shalini" alt="Shalini Verma" class="w-36 h-36 rounded-full mx-auto mb-4 border-4 border-white shadow-lg object-cover" onerror="this.onerror=null;this.src='https://placehold.co/150x150/D6A3B3/FFFFFF?text=SV';">
                             <h2 class="text-3xl font-bold text-[var(--color-base)] mb-2 font-display">Shalini Verma</h2>
                             <p class="text-[var(--color-rose-soft)] font-semibold mb-4">Life Coach & Guide, Human Potentialist, Organizational Whisperer</p>
                             <div class="text-[var(--color-base)] space-y-4 text-left">
@@ -274,7 +289,7 @@
                             </div>
                         </div>
                         <div class="bg-stone-50 p-8 rounded-lg shadow-md border border-gray-100 text-center">
-                             <img src="https://i.pravatar.cc/150?u=jatin" alt="Jatin Alla" class="w-36 h-36 rounded-full mx-auto mb-4 border-4 border-white shadow-lg" onerror="this.onerror=null;this.src='https://placehold.co/150x150/37306B/FFFFFF?text=JA';">
+                             <img src="./jatin" alt="Jatin Alla" class="w-36 h-36 rounded-full mx-auto mb-4 border-4 border-white shadow-lg object-cover" onerror="this.onerror=null;this.src='https://placehold.co/150x150/37306B/FFFFFF?text=JA';">
                              <h2 class="text-3xl font-bold text-[var(--color-base)] mb-2 font-display">Jatin Alla</h2>
                              <p class="text-[var(--color-indigo-deep)] font-semibold mb-4">Executive Coach, Systems Thinker, Consciousness Explorer</p>
                              <div class="text-[var(--color-base)] space-y-4 text-left">
@@ -285,7 +300,7 @@
                                  <a href="#" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-[#0077b5]">
                                      <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" clip-rule="evenodd"></path></svg>
                                  </a>
-                                 <a href="https://coldstone07.github.io/personal-website/" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-[var(--color-accent)]">
+                                  <a href="https://coldstone07.github.io/personal-website/" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-[var(--color-accent)]">
                                      <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"></path></svg>
                                  </a>
                              </div>
@@ -305,33 +320,133 @@
             </header>
             <main class="py-24 px-6 bg-white">
                 <div class="container mx-auto max-w-5xl">
-                    <div class="grid md:grid-cols-5 gap-12 items-center">
-                        <div class="md:col-span-3">
-                            <h2 class="text-3xl font-bold text-[var(--color-base)] font-display mb-4">What The Journey Includes</h2>
-                            <p class="text-lg mb-6">This is a high-touch, deeply personalized container of support, challenge, and co-creation. We walk with you as you navigate your most significant personal and professional transformations, providing you with the somatic tools and strategic insights to lead from a place of centered presence.</p>
-                            <ul class="space-y-3 text-lg">
-                                <li class="flex items-start"><span class="text-[var(--color-accent)] mr-3 mt-1">◆</span><strong class="font-semibold text-[var(--color-base)] mr-2">10 Weekly 1:1 Sessions:</strong> Deep, focused coaching to address your unique challenges and opportunities.</li>
-                                <li class="flex items-start"><span class="text-[var(--color-accent)] mr-3 mt-1">◆</span><strong class="font-semibold text-[var(--color-base)] mr-2">In-depth Blueprint Analysis:</strong> Using tools like the Enneagram and Gene Keys to map your internal landscape.</li>
-                                <li class="flex items-start"><span class="text-[var(--color-accent)] mr-3 mt-1">◆</span><strong class="font-semibold text-[var(--color-base)] mr-2">Unlimited Support:</strong> Access to your coach via text/email between sessions for real-time guidance.</li>
-                                <li class="flex items-start"><span class="text-[var(--color-accent)] mr-3 mt-1">◆</span><strong class="font-semibold text-[var(--color-base)] mr-2">Curated Practices:</strong> A personalized library of mindfulness and somatic exercises to build resilience.</li>
-                            </ul>
+                    <!-- TABS START -->
+                    <div class="mb-12">
+                        <div class="flex justify-center p-1 bg-stone-100 rounded-full max-w-md mx-auto">
+                            <button class="tab-button w-1/2 p-3 rounded-full font-semibold text-lg text-gray-500" data-tab="journey">The Journey</button>
+                            <button class="tab-button w-1/2 p-3 rounded-full font-semibold text-lg text-gray-500" data-tab="blueprint">Program Blueprint</button>
                         </div>
-                        <div class="md:col-span-2 bg-stone-50 p-8 rounded-lg shadow-lg border border-gray-100">
-                            <h3 class="text-2xl font-bold text-center text-[var(--color-base)] font-display mb-4">Investment</h3>
-                            <div class="space-y-4 text-center">
-                                <div>
-                                    <p class="text-3xl font-display text-[var(--color-accent)]">$3,000</p>
-                                    <p class="text-gray-600">Paid in Full</p>
+                    </div>
+
+                    <!-- TAB PANEL 1: Journey -->
+                    <div id="journey-panel" class="tab-panel">
+                        <div class="grid md:grid-cols-5 gap-12 items-center">
+                            <div class="md:col-span-3">
+                                <h2 class="text-3xl font-bold text-[var(--color-base)] font-display mb-4">What The Journey Includes</h2>
+                                <p class="text-lg mb-6">This is a high-touch, deeply personalized container of support, challenge, and co-creation. We walk with you as you navigate your most significant personal and professional transformations, providing you with the somatic tools and strategic insights to lead from a place of centered presence.</p>
+                                <ul class="space-y-3 text-lg">
+                                    <li class="flex items-start"><span class="text-[var(--color-accent)] mr-3 mt-1">◆</span><strong class="font-semibold text-[var(--color-base)] mr-2">10 Weekly 1:1 Sessions:</strong> Deep, focused coaching to address your unique challenges and opportunities.</li>
+                                    <li class="flex items-start"><span class="text-[var(--color-accent)] mr-3 mt-1">◆</span><strong class="font-semibold text-[var(--color-base)] mr-2">In-depth Blueprint Analysis:</strong> Using tools like the Enneagram and Gene Keys to map your internal landscape.</li>
+                                    <li class="flex items-start"><span class="text-[var(--color-accent)] mr-3 mt-1">◆</span><strong class="font-semibold text-[var(--color-base)] mr-2">Unlimited Support:</strong> Access to your coach via text/email between sessions for real-time guidance.</li>
+                                    <li class="flex items-start"><span class="text-[var(--color-accent)] mr-3 mt-1">◆</span><strong class="font-semibold text-[var(--color-base)] mr-2">Curated Practices:</strong> A personalized library of mindfulness and somatic exercises to build resilience.</li>
+                                </ul>
+                            </div>
+                            <div class="md:col-span-2 bg-stone-50 p-8 rounded-lg shadow-lg border border-gray-100">
+                                <h3 class="text-2xl font-bold text-center text-[var(--color-base)] font-display mb-4">Investment</h3>
+                                <div class="space-y-4 text-center">
+                                    <div>
+                                        <p class="text-3xl font-display text-[var(--color-accent)]">$3,000</p>
+                                        <p class="text-gray-600">Paid in Full</p>
+                                    </div>
+                                    <div class="text-gray-400">or</div>
+                                    <div>
+                                        <p class="text-3xl font-display text-[var(--color-accent)]">2 x $1,600</p>
+                                        <p class="text-gray-600">Two Installments</p>
+                                    </div>
+                                    <div class="text-gray-400">or</div>
+                                     <div>
+                                        <p class="text-3xl font-display text-[var(--color-accent)]">$350</p>
+                                        <p class="text-gray-600">Per Session</p>
+                                     </div>
                                 </div>
-                                <div class="text-gray-400">or</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- TAB PANEL 2: Blueprint -->
+                    <div id="blueprint-panel" class="tab-panel">
+                        <div class="text-center mb-12">
+                             <h2 class="text-3xl font-bold text-[var(--color-base)] font-display mb-2">A 10-Week Adventure in Transformation</h2>
+                             <p class="text-lg text-gray-600">Each week builds upon the last, creating a powerful momentum of insight and integration.</p>
+                        </div>
+                        <div class="space-y-8">
+                            <!-- Week 1 -->
+                            <div class="flex items-start space-x-6">
+                                <div class="flex-shrink-0 text-2xl font-display text-[var(--color-accent)] bg-stone-100 rounded-full w-16 h-16 flex items-center justify-center">Wk 1</div>
                                 <div>
-                                    <p class="text-3xl font-display text-[var(--color-accent)]">2 x $1,600</p>
-                                    <p class="text-gray-600">Two Installments</p>
+                                    <h3 class="text-2xl font-bold font-display mb-1">The Pattern Spotting Game</h3>
+                                    <p class="text-lg"><strong>Approach:</strong> Discover your core unconscious patterns not as flaws, but as fascinating clues on your unique treasure map. We begin with delight and curiosity, celebrating each discovery as an archaeologist would an ancient artifact.</p>
                                 </div>
-                                <div class="text-gray-400">or</div>
-                                 <div>
-                                    <p class="text-3xl font-display text-[var(--color-accent)]">$350</p>
-                                    <p class="text-gray-600">Per Session</p>
+                            </div>
+                            <!-- Week 2 -->
+                            <div class="flex items-start space-x-6">
+                                <div class="flex-shrink-0 text-2xl font-display text-[var(--color-accent)] bg-stone-100 rounded-full w-16 h-16 flex items-center justify-center">Wk 2</div>
+                                <div>
+                                    <h3 class="text-2xl font-bold font-display mb-1">Dancing with Dragons</h3>
+                                    <p class="text-lg"><strong>Approach:</strong> Learn to meet your resistance, fears, and inner critics. We discover how to dance with this energy—neither fighting nor fleeing—transmuting it from a source of fear into a source of power and resilience.</p>
+                                </div>
+                            </div>
+                            <!-- Week 3 -->
+                            <div class="flex items-start space-x-6">
+                                <div class="flex-shrink-0 text-2xl font-display text-[var(--color-accent)] bg-stone-100 rounded-full w-16 h-16 flex items-center justify-center">Wk 3</div>
+                                <div>
+                                    <h3 class="text-2xl font-bold font-display mb-1">The Alchemical Moment</h3>
+                                    <p class="text-lg"><strong>Approach:</strong> Practice catching your patterns in real-time. This is where true magic happens—not in achieving perfection, but in cultivating aware presence in the moment of choice, transforming reactions into conscious responses.</p>
+                                </div>
+                            </div>
+                             <!-- Week 4 -->
+                            <div class="flex items-start space-x-6">
+                                <div class="flex-shrink-0 text-2xl font-display text-[var(--color-accent)] bg-stone-100 rounded-full w-16 h-16 flex items-center justify-center">Wk 4</div>
+                                <div>
+                                    <h3 class="text-2xl font-bold font-display mb-1">Somatic Superpowers</h3>
+                                    <p class="text-lg"><strong>Approach:</strong> Learn to trust your body's wisdom over your mind's stories. Through guided somatic practices, you'll tap into the cellular intelligence that holds the key to deep, lasting integration and wholeness.</p>
+                                </div>
+                            </div>
+                            <!-- Week 5 -->
+                            <div class="flex items-start space-x-6">
+                                <div class="flex-shrink-0 text-2xl font-display text-[var(--color-accent)] bg-stone-100 rounded-full w-16 h-16 flex items-center justify-center">Wk 5</div>
+                                <div>
+                                    <h3 class="text-2xl font-bold font-display mb-1">Mindfulness Mastery</h3>
+                                    <p class="text-lg"><strong>Approach:</strong> Develop a sustainable mindfulness practice that fits your life. We hold space for both the beauty and the difficulty, honoring resistance as a natural part of the journey to unshakable presence.</p>
+                                </div>
+                            </div>
+                            <!-- Week 6 -->
+                             <div class="flex items-start space-x-6">
+                                <div class="flex-shrink-0 text-2xl font-display text-[var(--color-accent)] bg-stone-100 rounded-full w-16 h-16 flex items-center justify-center">Wk 6</div>
+                                <div>
+                                    <h3 class="text-2xl font-bold font-display mb-1">Meeting Your Inner Family</h3>
+                                    <p class="text-lg"><strong>Approach:</strong> Create a safe inner container to welcome all parts of yourself, especially those that have been exiled or shamed. By responding with respect and curiosity, we cultivate inner unity—the foundation of authentic leadership.</p>
+                                </div>
+                            </div>
+                             <!-- Week 7 -->
+                             <div class="flex items-start space-x-6">
+                                <div class="flex-shrink-0 text-2xl font-display text-[var(--color-accent)] bg-stone-100 rounded-full w-16 h-16 flex items-center justify-center">Wk 7</div>
+                                <div>
+                                    <h3 class="text-2xl font-bold font-display mb-1">The Great Reframe</h3>
+                                    <p class="text-lg"><strong>Approach:</strong> Discover that changing your perspective isn't about "positive thinking," but about seeing a fuller, more complete truth. We practice holding multiple perspectives to unlock creative solutions and deeper wisdom.</p>
+                                </div>
+                            </div>
+                            <!-- Week 8 -->
+                            <div class="flex items-start space-x-6">
+                                <div class="flex-shrink-0 text-2xl font-display text-[var(--color-accent)] bg-stone-100 rounded-full w-16 h-16 flex items-center justify-center">Wk 8</div>
+                                <div>
+                                    <h3 class="text-2xl font-bold font-display mb-1">Anchoring the Field</h3>
+                                    <p class="text-lg"><strong>Approach:</strong> Learn to cultivate and anchor a field of coherence—a state of inner alignment that positively and measurably influences your teams, your family, and your environment. This is where personal change becomes systemic impact.</p>
+                                </div>
+                            </div>
+                            <!-- Week 9 -->
+                            <div class="flex items-start space-x-6">
+                                <div class="flex-shrink-0 text-2xl font-display text-[var(--color-accent)] bg-stone-100 rounded-full w-16 h-16 flex items-center justify-center">Wk 9</div>
+                                <div>
+                                    <h3 class="text-2xl font-bold font-display mb-1">The Power of We</h3>
+                                    <p class="text-lg"><strong>Approach:</strong> Explore the dynamics of co-regulation and collective intelligence. You will learn to lead and create from a place of profound connection, leveraging the group's wisdom to solve complex challenges.</p>
+                                </div>
+                            </div>
+                            <!-- Week 10 -->
+                            <div class="flex items-start space-x-6">
+                                <div class="flex-shrink-0 text-2xl font-display text-[var(--color-accent)] bg-stone-100 rounded-full w-16 h-16 flex items-center justify-center">Wk 10</div>
+                                <div>
+                                    <h3 class="text-2xl font-bold font-display mb-1">Emergence & Evolution</h3>
+                                    <p class="text-lg"><strong>Approach:</strong> Present your Kairos Capstone—not as an end, but as the seed of your next chapter. We witness and bless the unique gift you are now ready to plant in the world, celebrating the beginning of your real adventure.</p>
                                 </div>
                             </div>
                         </div>
@@ -368,11 +483,11 @@
                         <hr>
                         <!-- Zelle Option -->
                         <div class="text-center">
-                            <h2 class="text-2xl font-bold text-[var(--color-base)] font-display mb-2">Zelle</h2>
-                            <p class="text-lg">Send payment using the following details:</p>
-                            <p class="text-xl font-semibold text-[var(--color-indigo-deep)] mt-1">jatinalla2000@gmail.com</p>
-                            <p class="text-lg text-gray-600">or</p>
-                            <p class="text-xl font-semibold text-[var(--color-indigo-deep)]">415-960-5333</p>
+                             <h2 class="text-2xl font-bold text-[var(--color-base)] font-display mb-2">Zelle</h2>
+                             <p class="text-lg">Send payment using the following details:</p>
+                             <p class="text-xl font-semibold text-[var(--color-indigo-deep)] mt-1">jatinalla2000@gmail.com</p>
+                             <p class="text-lg text-gray-600">or</p>
+                             <p class="text-xl font-semibold text-[var(--color-indigo-deep)]">415-960-5333</p>
                         </div>
                     </div>
                     <div class="text-center mt-12">
@@ -481,25 +596,50 @@
                 }
                 
                 window.scrollTo(0, 0);
+                 // Initialize tabs if on coaching page
+                if (pageId === 'coaching') {
+                    setupTabs();
+                }
             }
 
             mobileMenuButton.addEventListener('click', () => {
                 mobileMenu.classList.toggle('hidden');
-                mobileMenu.querySelectorAll('a').forEach(link => {
-                    const page = link.getAttribute('onclick').match(/'([^']+)'/)[1];
-                    link.onclick = (e) => {
-                        e.preventDefault();
-                        showPage(page);
-                    };
-                });
             });
 
             showPage('home');
             document.getElementById('copyright-year').textContent = new Date().getFullYear();
 
+            // --- Coaching Page Tabs ---
+            function setupTabs() {
+                const tabButtons = document.querySelectorAll('.tab-button');
+                const tabPanels = document.querySelectorAll('.tab-panel');
+
+                // Set initial state
+                tabButtons[0].classList.add('active');
+                tabPanels[0].style.display = 'block';
+
+                tabButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        tabButtons.forEach(btn => btn.classList.remove('active'));
+                        button.classList.add('active');
+
+                        const targetTab = button.dataset.tab;
+
+                        tabPanels.forEach(panel => {
+                            if (panel.id === `${targetTab}-panel`) {
+                                gsap.fromTo(panel, {autoAlpha: 0, y: 20}, {autoAlpha: 1, y: 0, duration: 0.5, display: 'block'});
+                            } else {
+                                panel.style.display = 'none';
+                            }
+                        });
+                    });
+                });
+            }
+
+
             gsap.timeline({ delay: 0.5 })
-                .to("#hero-h1", { y: -20, opacity: 1, duration: 0.8, ease: 'power2.out' })
-                .to("#hero-p", { y: -10, opacity: 1, duration: 0.7, ease: 'power2.out' }, "-=0.5")
+                .to("#hero-h1", { y: 0, opacity: 1, duration: 0.8, ease: 'power2.out' })
+                .to("#hero-p", { y: 0, opacity: 1, duration: 0.7, ease: 'power2.out' }, "-=0.5")
                 .to("#hero-button", { opacity: 1, scale: 1, duration: 0.6, ease: 'back.out(1.7)' }, "-=0.4");
 
             const logoSketch = (p) => {
@@ -692,11 +832,9 @@
                             autoAlpha: 1, y: 0, duration: 1,
                             scrollTrigger: {
                                 trigger: step,
-                                start: 'top center',
+                                start: 'top center+=100',
                                 end: 'bottom bottom',
-                                toggleActions: 'play none none reverse',
-                                // Add a small delay for the first step to ensure it doesn't fire too early
-                                delay: i === 0 ? 0.2 : 0, 
+                                toggleActions: 'play reverse play reverse',
                             }
                         }
                     );
@@ -709,40 +847,42 @@
                         pin: true,
                         scrub: 1,
                         start: 'top top',
-                        end: '+=200%' // 3 sections, so 2 full scrolls
+                        end: '+=300%' // 3 sections = 300%
                     }
                 });
 
-                // Animate from Discover -> Integrate
-                morphTl.to(particles.geometry.attributes.position, {
+                // Morph: Discover -> Integrate
+                morphTl.to(particles.geometry.attributes.position.array, {
                     endArray: integratePositions,
-                    onUpdate: () => { if(particles) particles.geometry.attributes.position.needsUpdate = true; }
-                }, 0); // Start at the beginning of the timeline
+                    duration: 1,
+                    ease: 'power1.inOut',
+                    onUpdate: () => {
+                        particles.geometry.attributes.position.needsUpdate = true;
+                    }
+                }, 0); // Start at time 0
 
-                // Animate from Integrate -> Actualize
-                morphTl.to(particles.geometry.attributes.position, {
+                // Morph: Integrate -> Actualize
+                morphTl.to(particles.geometry.attributes.position.array, {
                     endArray: actualizePositions,
-                    onUpdate: () => { if(particles) particles.geometry.attributes.position.needsUpdate = true; }
-                }, 1); // Start at the second half of the timeline
+                    duration: 1,
+                    ease: 'power2.inOut',
+                    onUpdate: () => {
+                        particles.geometry.attributes.position.needsUpdate = true;
+                    }
+                }, 1); // Start at time 1
 
-                // Animate particle size for the "star" effect
-                morphTl.to(particles.material, { size: 0.08 }, 1); // Grow size during integrate->actualize
-                morphTl.to(particles.material, { size: 0.01 }, 1.5); // Shrink to a point
+                // Control particle size and opacity during transitions
+                morphTl.to(particles.material, { size: 0.05, duration: 0.5 }, 0.5); // Grow during expansion
+                morphTl.to(particles.material, { size: 0.025, duration: 0.5 }, 1); // Shrink back
+                morphTl.to(particles.material, { size: 0.1, duration: 0.5 }, 1.5); // Pulse at center
+                morphTl.to(particles.material, { size: 0.01, opacity: 0, duration: 0.5 }, 2); // Fade out at the end
             }
 
+            if (portalContainer) {
+                initThree();
+            }
 
-            let lastScrollTop = 0;
-            const navbar = document.getElementById('navbar');
-            window.addEventListener("scroll", function() {
-               let st = window.pageYOffset || document.documentElement.scrollTop;
-               if (st > lastScrollTop && st > navbar.offsetHeight){
-                   gsap.to(navbar, { y: '-100%', duration: 0.3, ease: 'power2.out' });
-               } else {
-                   gsap.to(navbar, { y: '0%', duration: 0.3, ease: 'power2.out' });
-               }
-               lastScrollTop = st <= 0 ? 0 : st;
-            }, false);
-
+            // --- Contact Form ---
             const contactForm = document.getElementById('contact-form');
             const formStatus = document.getElementById('form-status');
             contactForm.addEventListener('submit', (e) => {
@@ -753,22 +893,6 @@
                     formStatus.innerHTML = '';
                 }, 5000);
             });
-            
-            // Button Pop Animation
-            const primaryButtons = document.querySelectorAll('.primary-button');
-            primaryButtons.forEach(button => {
-                button.addEventListener('mouseenter', () => {
-                    gsap.to(button, { scale: 1.05, duration: 0.3, ease: 'back.out(1.7)' });
-                });
-                 button.addEventListener('mouseleave', () => {
-                    gsap.to(button, { scale: 1, duration: 0.3, ease: 'power2.out' });
-                });
-            });
-
-
-            if (portalContainer) {
-                initThree();
-            }
         });
     </script>
 </body>
