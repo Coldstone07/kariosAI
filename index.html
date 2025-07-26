@@ -12,24 +12,27 @@
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --color-base: #1a1816;
-            --color-text: #F4F1ED;
-            --color-gold-light: #C0A062;
+            --color-base: #161A30; /* Midnight Blue */
+            --color-text: #F0F3F5; /* Ghost White */
+            --color-accent: #94A6E2; /* Periwinkle */
+            --color-accent-dark: #788BC4; /* Darker Periwinkle for hovers */
             --color-indigo-deep: #37306B;
             --color-rose-soft: #D6A3B3;
-            --color-life-accent: #A3E635;
         }
 
         body {
             font-family: 'Lora', serif;
             background-color: #FDFCFB;
             color: var(--color-base);
+            overscroll-behavior: none;
         }
         .font-display {
             font-family: 'Playfair Display', serif;
         }
         .page-content {
             display: none;
+            opacity: 0;
+            visibility: hidden;
         }
         .hero-bg {
             position: relative;
@@ -41,28 +44,11 @@
             text-align: center;
             overflow: hidden;
         }
-        #video-bg {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
-            height: auto;
-            z-index: -1;
-            transform: translateX(-50%) translateY(-50%);
-            background-size: cover;
-            filter: brightness(0.4);
-        }
-        .luminous-divider {
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(192, 160, 98, 0.4), transparent);
-        }
         #three-canvas {
             position: fixed;
             top: 0;
             left: 0;
-            z-index: -1;
+            z-index: 1; /* Behind portal content but above background */
             opacity: 0;
             transition: opacity 0.5s ease-in-out;
         }
@@ -72,57 +58,88 @@
             align-items: center;
             justify-content: center;
             color: var(--color-text);
+            position: relative;
+            z-index: 2;
         }
+        
+        @keyframes pulse-glow {
+            0%, 100% {
+                border-color: rgba(240, 243, 245, 0.1);
+                box-shadow: 0 0 5px rgba(240, 243, 245, 0.1);
+            }
+            50% {
+                border-color: rgba(240, 243, 245, 0.3);
+                box-shadow: 0 0 15px rgba(148, 166, 226, 0.3);
+            }
+        }
+
         .portal-step .content {
             max-width: 40rem;
             padding: 2rem;
-            background-color: rgba(26, 24, 22, 0.5);
+            background-color: rgba(22, 26, 48, 0.5); /* Using base color with alpha */
             backdrop-filter: blur(10px);
             border-radius: 1rem;
-            border: 1px solid rgba(244, 241, 237, 0.1);
-        }
-        #constellation-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
+            border: 1px solid rgba(240, 243, 245, 0.1); /* Using text color with alpha */
+            animation: pulse-glow 4s ease-in-out infinite;
         }
         
-        /* Dawn Gradient Animation */
         @keyframes dawn-gradient {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-        .hero-bg {
-            background: linear-gradient(-45deg, #1a1816, #37306B, #4C3B71, #6A5F9E, #C0A062, #D6A3B3, #F4F1ED, #1a1816);
-            background-size: 600% 600%;
+        .hero-gradient-bg {
+            background: linear-gradient(-45deg, #161A30, #37306B, #788BC4, #94A6E2, #D6A3B3, #F0F3F5, #161A30);
+            background-size: 400% 400%;
             animation: dawn-gradient 25s ease infinite;
         }
         
-        .journal-bg {
-            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+        .concept-info {
+            display: inline-block;
+            margin-left: 8px;
+            cursor: pointer;
+            color: var(--color-accent);
+            transition: transform 0.2s ease;
+        }
+        .concept-info:hover {
+            transform: scale(1.2);
+        }
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+            z-index: 999;
+        }
+        .modal-content {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
         }
     </style>
 </head>
-<body class="bg-stone-50 text-stone-800">
+<body class="bg-stone-50 text-[var(--color-base)]">
 
     <!-- Navigation Bar -->
-    <nav class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+    <nav id="navbar" class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50 transition-transform duration-300">
         <div class="container mx-auto px-6">
             <div class="flex justify-between items-center py-4">
                 <div class="flex items-center cursor-pointer" onclick="showPage('home')">
-                    <div id="logo-canvas" class="mr-3"></div>
-                    <span class="text-2xl font-bold text-stone-800">Kairos Path</span>
+                    <div id="logo-canvas" class="mr-3 w-10 h-10"></div>
+                    <span class="text-2xl font-bold text-[var(--color-base)] font-display">Kairos Path</span>
                 </div>
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex items-center space-x-8">
-                    <a href="#" onclick="event.preventDefault(); showPage('home')" class="text-stone-600 hover:text-amber-600 transition-colors duration-300">Home</a>
-                    <a href="#" onclick="event.preventDefault(); showPage('about')" class="text-stone-600 hover:text-amber-600 transition-colors duration-300">About Us</a>
-                    <a href="#" onclick="event.preventDefault(); showPage('contact')" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-5 rounded-full transition-all duration-300 transform hover:scale-105 shadow-sm">
-                        Contact
+                    <a href="#" onclick="event.preventDefault(); showPage('home')" class="nav-link text-[var(--color-base)] hover:text-[var(--color-accent)] transition-colors duration-300" data-page="home">Home</a>
+                    <a href="#" onclick="event.preventDefault(); showPage('about')" class="nav-link text-[var(--color-base)] hover:text-[var(--color-accent)] transition-colors duration-300" data-page="about">About Us</a>
+                    <a href="#" onclick="event.preventDefault(); showPage('contact')" class="nav-link text-[var(--color-base)] hover:text-[var(--color-accent)] transition-colors duration-300" data-page="contact">Contact</a>
+                    <a href="#" onclick="event.preventDefault(); showPage('coaching')" class="primary-button bg-[var(--color-accent)] hover:bg-[var(--color-accent-dark)] text-white font-bold py-2 px-5 rounded-full transition-colors duration-300 shadow-sm">
+                        Coaching
                     </a>
                 </div>
                 <!-- Mobile Menu Button -->
@@ -135,10 +152,11 @@
         </div>
         <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden md:hidden bg-white py-4 px-6">
-            <a href="#" onclick="event.preventDefault(); showPage('home')" class="block py-2 text-stone-600 hover:text-amber-600">Home</a>
-            <a href="#" onclick="event.preventDefault(); showPage('about')" class="block py-2 text-stone-600 hover:text-amber-600">About Us</a>
-            <a href="#" onclick="event.preventDefault(); showPage('contact')" class="block mt-4 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded-full transition duration-300 text-center">
-                Contact
+            <a href="#" onclick="event.preventDefault(); showPage('home')" class="block py-2 text-[var(--color-base)] hover:text-[var(--color-accent)]">Home</a>
+            <a href="#" onclick="event.preventDefault(); showPage('about')" class="block py-2 text-[var(--color-base)] hover:text-[var(--color-accent)]">About Us</a>
+             <a href="#" onclick="event.preventDefault(); showPage('contact')" class="block py-2 text-[var(--color-base)] hover:text-[var(--color-accent)]">Contact</a>
+            <a href="#" onclick="event.preventDefault(); showPage('coaching')" class="primary-button block mt-4 bg-[var(--color-accent)] hover:bg-[var(--color-accent-dark)] text-white font-bold py-2 px-4 rounded-full transition-colors duration-300 text-center">
+                Coaching
             </a>
         </div>
     </nav>
@@ -146,38 +164,57 @@
     <main id="main-content">
         <!-- Home Page Content -->
         <div id="home-page" class="page-content">
-            <header id="hero" class="hero-bg">
-                <video autoplay loop muted playsinline id="video-bg">
-                    <source src="https://assets.mixkit.co/videos/preview/mixkit-blue-and-red-ink-in-water-344-large.mp4" type="video/mp4">
-                </video>
+            <header id="hero" class="hero-bg hero-gradient-bg">
                 <div class="relative z-10 px-6">
-                    <h1 id="hero-h1" class="text-4xl md:text-6xl font-display tracking-tight mb-4 opacity-0">From Achievement to Embodiment: A Journey into Your Divine Blueprint.</h1>
-                    <p id="hero-p" class="text-lg md:text-xl text-stone-300 max-w-3xl mx-auto mb-8 opacity-0">Kairos is a sacred space where ancient wisdom and intuitive AI converge to guide you from fragmentation to wholeness.</p>
-                    <button id="hero-button" onclick="showPage('contact')" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-8 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-lg opacity-0">
-                        Begin a Conversation
+                    <h1 id="hero-h1" class="text-4xl md:text-6xl font-display tracking-tight mb-4 opacity-0">Beyond Achievement: The Path to Lasting Fulfillment</h1>
+                    <p id="hero-p" class="text-lg md:text-xl text-stone-300 max-w-3xl mx-auto mb-8 opacity-0">A confidential, transformative journey for leaders ready to align external success with inner satisfaction.</p>
+                    <button id="hero-button" onclick="showPage('coaching')" class="primary-button bg-[var(--color-accent)] hover:bg-[var(--color-accent-dark)] text-white font-bold py-3 px-8 rounded-full text-lg transition-colors duration-300 shadow-lg opacity-0">
+                        Explore Our Programs
                     </button>
                 </div>
             </header>
             
-            <section id="mirror" class="py-24 px-6 bg-stone-50 subtle-texture">
-                <div class="container mx-auto text-center max-w-4xl">
-                    <h2 class="text-3xl md:text-4xl font-bold text-stone-900 mb-4">Is This You?</h2>
-                    <p class="text-lg text-stone-600">You've built an impeccable external world, yet a subtle sense of fragmentation persists. It feels like your energy is scattered, your intuition muffled by the noise of constant pressure. This is the call of your Higher Self, beckoning you to integrate the disparate parts of your being and live a life that feels as true on the inside as it looks on the outside.</p>
+            <section id="mirror" class="py-24 px-6 bg-stone-50">
+                <div class="container mx-auto max-w-5xl">
+                    <div class="text-center mb-16">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[var(--color-base)] mb-4 font-display">Does This Resonate?</h2>
+                        <p class="text-lg text-[var(--color-base)] max-w-3xl mx-auto">You've climbed the mountain of success, only to find the view isn't what you expected. The drive that got you here now feels like it's running on empty.</p>
+                    </div>
+                    <div class="grid md:grid-cols-3 gap-8 text-lg">
+                        <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0 text-[var(--color-accent)] mt-1"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+                            <p>You feel a growing disconnect between your external achievements and a lack of inner fulfillment.</p>
+                        </div>
+                        <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0 text-[var(--color-accent)] mt-1"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+                            <p>The constant pressure to perform leaves you feeling stressed, exhausted, or on the verge of burnout.</p>
+                        </div>
+                        <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0 text-[var(--color-accent)] mt-1"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+                            <p>You're asking "What's next?" but the old answers of more money, status, or power no longer inspire you.</p>
+                        </div>
+                    </div>
                 </div>
             </section>
             
-            <section id="portal-container" class="relative">
+            <section id="portal-container" class="relative hero-gradient-bg">
                 <canvas id="three-canvas"></canvas>
                 <div id="discover-step" class="portal-step">
                     <div class="content">
-                        <h3 class="text-3xl font-bold mb-4 font-display">Discover Your Divine Blueprint.</h3>
-                        <p>Using profound tools like the Enneagram and the Gene Keys, we map your unique internal operating system. We uncover the unconscious patterns, core motivations, and hidden gifts encoded in your DNA, revealing the source of your greatest strengths and deepest challenges.</p>
+                        <h3 class="text-3xl font-bold mb-4 font-display">Discover Your Essential Blueprint.</h3>
+                        <p>Using profound tools like the 
+                            <span class="font-semibold text-[var(--color-accent)]">Enneagram</span><span class="concept-info" data-concept="enneagram">ⓘ</span>
+                             and the 
+                            <span class="font-semibold text-[var(--color-accent)]">Gene Keys</span><span class="concept-info" data-concept="genekeys">ⓘ</span>, 
+                            we map your unique internal operating system. We uncover the unconscious patterns, core motivations, and hidden gifts encoded in your DNA, revealing the source of your greatest strengths and deepest challenges.</p>
                     </div>
                 </div>
                 <div id="integrate-step" class="portal-step">
                     <div class="content">
                         <h3 class="text-3xl font-bold mb-4 font-display">Integrate the Fractured Self.</h3>
-                        <p>Awareness is the first step; embodiment is the key to lasting change. Through trauma-informed somatic practices and deep mindfulness, you will learn to release the sankaras—the deep-seated energetic knots—that create stress and burnout. This is not about managing your nervous system; it is about fundamentally rewiring it for wholeness.</p>
+                        <p>Awareness is the first step; embodiment is the key to lasting change. Through trauma-informed somatic practices and deep mindfulness, you will learn to release the 
+                            <span class="font-semibold text-[var(--color-accent)]">sankaras</span><span class="concept-info" data-concept="sankaras">ⓘ</span>—the
+                             deep-seated energetic knots—that create stress and burnout. This is not about managing your nervous system; it is about fundamentally rewiring it for wholeness.</p>
                     </div>
                 </div>
                 <div id="actualize-step" class="portal-step">
@@ -188,18 +225,10 @@
                 </div>
             </section>
 
-            <section id="promise" class="py-24 px-6 bg-stone-800 text-white relative">
-                <canvas id="constellation-canvas"></canvas>
-                <div class="container mx-auto text-center max-w-4xl relative z-10">
-                    <h2 class="text-3xl md:text-4xl font-bold mb-12">Your Transformation</h2>
-                    <p class="text-lg text-stone-300">Hover over the stars to explore the interconnected outcomes of your journey.</p>
-                </div>
-            </section>
-
             <section class="py-24 px-6 bg-white">
                 <div class="container mx-auto text-center max-w-4xl">
-                    <h2 class="text-3xl md:text-4xl font-bold text-stone-900 mb-4">The Kairos Principle: A New Human for a New Earth.</h2>
-                    <p class="text-lg text-stone-600">Humanity is at a profound evolutionary crossroads. The path forward requires a new kind of human being—one who balances the analytical power of the mind (Artificial Intelligence) with the intuitive wisdom of the heart (Divine Intelligence). Kairos is a vessel for this transformation, designed to accelerate your personal evolution and contribute to the emergence of unity consciousness on our planet.</p>
+                    <h2 class="text-3xl md:text-4xl font-bold text-[var(--color-base)] mb-4 font-display">The Kairos Principle: A New Framework for Leadership</h2>
+                    <p class="text-lg text-[var(--color-base)]">We are in a new era of work, where complexity is the norm and the old rules no longer apply. The path forward requires a different kind of leader—one who can integrate the sharp, analytical power of the mind with the grounded wisdom of strategic intuition. Kairos Path is a transformational framework designed to cultivate this integrated intelligence. We help you move beyond just managing data to making wiser decisions, fostering true innovation, and leading with a renewed sense of purpose and resilience.</p>
                 </div>
             </section>
         </div>
@@ -207,14 +236,13 @@
         <!-- About Page Content -->
         <div id="about-page" class="page-content">
             <header class="bg-stone-100 py-24 px-6">
-                <div class="container mx-auto text-center"><h1 class="text-4xl md:text-5xl font-bold text-stone-900">About Kairos Path</h1></div>
+                <div class="container mx-auto text-center"><h1 class="text-4xl md:text-5xl font-bold text-[var(--color-base)] font-display">About Kairos Path</h1></div>
             </header>
             <main class="py-24 px-6 bg-white">
-                <!-- Our Philosophy Section -->
                 <section class="container mx-auto max-w-4xl mb-24">
                     <div class="bg-white p-8 md:p-12 rounded-lg shadow-xl border border-gray-100">
-                        <h2 class="text-3xl font-bold text-center text-stone-900 mb-6">Our Philosophy: The Meaning of Kairos</h2>
-                        <div class="text-lg text-stone-700 space-y-4">
+                        <h2 class="text-3xl font-bold text-center text-[var(--color-base)] mb-6 font-display">Our Philosophy: The Meaning of Kairos</h2>
+                        <div class="text-lg text-[var(--color-base)] space-y-4">
                             <p>Kairos is not just a name — it is a calling. In ancient Greek, kairos signifies the opportune, sacred moment. While chronos marks the ticking of the clock, kairos speaks to those precious moments where time stands still and everything feels possible.</p>
                             <p>A state of flow is activated, and it cannot be measured but only experienced. There is an element of serendipity, and a feeling of seizing an opportunity. These are the moments when something deep inside stirs — when the veil lifts, and a portal opens. We step into presence, possibility, and purpose.</p>
                             <p>Kairos Path exists to serve these moments. It is not a company of escape, but of embodiment. It seeks not to distract, but to awaken — to help us listen deeply, connect authentically, and rise collectively, as we transform from within.</p>
@@ -222,88 +250,172 @@
                     </div>
                 </section>
                 
-                <!-- Meet Your Guides Section -->
                 <section class="container mx-auto">
                     <div class="text-center mb-16">
-                         <h2 class="text-4xl font-bold text-stone-900">Meet Your Guides</h2>
-                         <p class="text-lg text-stone-600 mt-2">Experienced coaches dedicated to your transformation.</p>
+                         <h2 class="text-4xl font-bold text-[var(--color-base)] font-display">Meet Your Guides</h2>
+                         <p class="text-lg text-[var(--color-base)] mt-2">Experienced coaches dedicated to your transformation.</p>
                     </div>
                     <div class="grid lg:grid-cols-2 gap-12 items-start max-w-6xl mx-auto">
                         <div class="bg-stone-50 p-8 rounded-lg shadow-lg border border-gray-100 text-center">
-                            <img src="https://picsum.photos/seed/shalini/150/150" alt="Shalini Verma" class="w-36 h-36 rounded-full mx-auto mb-4 border-4 border-white shadow-lg">
-                            <h2 class="text-3xl font-bold text-stone-900 mb-2">Shalini Verma</h2>
-                            <p class="text-rose-600 font-semibold mb-4">Life Coach & Guide, Human Potentialist, Organizational Whisperer</p>
-                            <div class="text-stone-700 space-y-4 text-left">
+                            <img src="https://i.pravatar.cc/150?u=shalini" alt="Shalini Verma" class="w-36 h-36 rounded-full mx-auto mb-4 border-4 border-white shadow-lg" onerror="this.onerror=null;this.src='https://placehold.co/150x150/D6A3B3/FFFFFF?text=SV';">
+                            <h2 class="text-3xl font-bold text-[var(--color-base)] mb-2 font-display">Shalini Verma</h2>
+                            <p class="text-[var(--color-rose-soft)] font-semibold mb-4">Life Coach & Guide, Human Potentialist, Organizational Whisperer</p>
+                            <div class="text-[var(--color-base)] space-y-4 text-left">
                                 <p>Trained as an Enneagram Guide, Trauma Informed Coach, and Somatic Healer, Shalini is a MIT and Harvard Business School graduate named to Crain's Top 50 Technology Talent. With experience at Ford, Sun, Oracle, and Google, she inspires leaders to transform themselves and their organizations.</p>
                                 <p>Her passion is to discover and develop tools to uncover individual and collective intelligence to solve increasingly complex problems.</p>
                             </div>
                             <div class="mt-6 flex space-x-4 justify-center">
-                                <a href="https://www.linkedin.com/in/shalini-verma-89249/" target="_blank" rel="noopener noreferrer" class="text-stone-500 hover:text-blue-700">
+                                <a href="https://www.linkedin.com/in/shalini-verma-89249/" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-[#0077b5]">
                                     <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" clip-rule="evenodd"></path></svg>
                                 </a>
-                                <a href="https://www.youtube.com/@SenseofAdventure-4us" target="_blank" rel="noopener noreferrer" class="text-stone-500 hover:text-red-600">
+                                <a href="https://www.youtube.com/@SenseofAdventure-4us" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-[#FF0000]">
                                     <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z" clip-rule="evenodd"></path></svg>
                                 </a>
                             </div>
                         </div>
                         <div class="bg-stone-50 p-8 rounded-lg shadow-md border border-gray-100 text-center">
-                             <img src="https://picsum.photos/seed/jatin/150/150" alt="Jatin Alla" class="w-36 h-36 rounded-full mx-auto mb-4 border-4 border-white shadow-lg">
-                            <h2 class="text-3xl font-bold text-stone-900 mb-2">Jatin Alla</h2>
-                            <p class="text-amber-600 font-semibold mb-4">Life Coach, AI Researcher, Community Builder</p>
-                            <div class="text-stone-700 space-y-4 text-left">
-                                <p>A former researcher at Google Research and DeepMind, Jatin specializes in the intersection of AI and Human-Computer Interaction. With a background in cognitive science, he helps clients recognize and transform deeply ingrained behavioral patterns for lasting personal growth.</p>
-                                <p>He bridges the gap between technology and human development, generating insights that drive strategic decision-making and ethical AI implementation.</p>
-                            </div>
-                            <div class="mt-6 flex space-x-4 justify-center">
-                                <a href="https://www.linkedin.com/in/jatin-alla-7259ab169/" target="_blank" rel="noopener noreferrer" class="text-stone-500 hover:text-blue-700">
-                                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" clip-rule="evenodd"></path></svg>
-                                </a>
-                                <a href="https://coldstone07.github.io/personal-website/" target="_blank" rel="noopener noreferrer" class="text-stone-500 hover:text-gray-900">
-                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9V3m0 18a9 9 0 009-9m-9 9a9 9 0 00-9-9"></path></svg>
-                                </a>
-                            </div>
+                             <img src="https://i.pravatar.cc/150?u=jatin" alt="Jatin Alla" class="w-36 h-36 rounded-full mx-auto mb-4 border-4 border-white shadow-lg" onerror="this.onerror=null;this.src='https://placehold.co/150x150/37306B/FFFFFF?text=JA';">
+                             <h2 class="text-3xl font-bold text-[var(--color-base)] mb-2 font-display">Jatin Alla</h2>
+                             <p class="text-[var(--color-indigo-deep)] font-semibold mb-4">Executive Coach, Systems Thinker, Consciousness Explorer</p>
+                             <div class="text-[var(--color-base)] space-y-4 text-left">
+                                 <p>Jatin brings a unique blend of entrepreneurial spirit and deep contemplative practice to his coaching. After a successful career building and exiting tech startups, he dedicated himself to exploring the intersection of leadership, performance, and consciousness. He is a certified Integral Coach and a student of non-dual wisdom traditions.</p>
+                                 <p>He specializes in helping leaders navigate complexity, unlock creativity, and lead from a place of profound presence and authenticity.</p>
+                             </div>
+                             <div class="mt-6 flex space-x-4 justify-center">
+                                 <a href="#" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-[#0077b5]">
+                                     <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" clip-rule="evenodd"></path></svg>
+                                 </a>
+                                 <a href="https://coldstone07.github.io/personal-website/" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-[var(--color-accent)]">
+                                     <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"></path></svg>
+                                 </a>
+                             </div>
                         </div>
                     </div>
                 </section>
             </main>
         </div>
-        
-        <!-- Contact Page Content -->
-        <div id="contact-page" class="page-content">
+
+        <!-- Coaching Page Content -->
+        <div id="coaching-page" class="page-content">
             <header class="bg-stone-100 py-24 px-6">
-                <div class="container mx-auto text-center"><h1 class="text-4xl md:text-5xl font-bold text-stone-900">Get Started</h1><p class="text-lg text-stone-600 mt-2">Take the first step towards a more fulfilling life and career.</p></div>
+                <div class="container mx-auto text-center">
+                    <h1 class="text-4xl md:text-5xl font-bold text-[var(--color-base)] font-display">The Kairos Path Journey</h1>
+                    <p class="text-lg text-[var(--color-base)] mt-4 max-w-3xl mx-auto">A 10-week intensive designed for leaders, visionaries, and creators ready to bridge the gap between their outer success and inner fulfillment.</p>
+                </div>
             </header>
             <main class="py-24 px-6 bg-white">
-                <div class="container mx-auto max-w-5xl grid md:grid-cols-2 gap-12">
-                    <div class="bg-stone-50 p-8 rounded-lg shadow-lg border border-gray-100">
-                        <h2 class="text-3xl font-bold text-stone-900 mb-6">Begin a Conversation</h2>
-                        <p class="text-stone-700 mb-6">Schedule a complimentary discovery call to learn more and see if the Kairos Path Coaching Program is right for you. Reach out to either of us to begin.</p>
-                        <div class="space-y-4 text-stone-700">
-                            <div class="flex items-start">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-3 text-amber-600 flex-shrink-0 mt-1"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"></path></svg>
-                                <p class="text-lg">Jatin: <a href="mailto:jatinalla2000@gmail.com" class="text-amber-600 hover:underline">jatinalla2000@gmail.com</a></p>
-                            </div>
-                            <div class="flex items-start">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-3 text-amber-600 flex-shrink-0 mt-1"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"></path></svg>
-                                <p class="text-lg">Shalini: <a href="mailto:shal.verm@gmail.com" class="text-amber-600 hover:underline">shal.verm@gmail.com</a></p>
+                <div class="container mx-auto max-w-5xl">
+                    <div class="grid md:grid-cols-5 gap-12 items-center">
+                        <div class="md:col-span-3">
+                            <h2 class="text-3xl font-bold text-[var(--color-base)] font-display mb-4">What The Journey Includes</h2>
+                            <p class="text-lg mb-6">This is a high-touch, deeply personalized container of support, challenge, and co-creation. We walk with you as you navigate your most significant personal and professional transformations, providing you with the somatic tools and strategic insights to lead from a place of centered presence.</p>
+                            <ul class="space-y-3 text-lg">
+                                <li class="flex items-start"><span class="text-[var(--color-accent)] mr-3 mt-1">◆</span><strong class="font-semibold text-[var(--color-base)] mr-2">10 Weekly 1:1 Sessions:</strong> Deep, focused coaching to address your unique challenges and opportunities.</li>
+                                <li class="flex items-start"><span class="text-[var(--color-accent)] mr-3 mt-1">◆</span><strong class="font-semibold text-[var(--color-base)] mr-2">In-depth Blueprint Analysis:</strong> Using tools like the Enneagram and Gene Keys to map your internal landscape.</li>
+                                <li class="flex items-start"><span class="text-[var(--color-accent)] mr-3 mt-1">◆</span><strong class="font-semibold text-[var(--color-base)] mr-2">Unlimited Support:</strong> Access to your coach via text/email between sessions for real-time guidance.</li>
+                                <li class="flex items-start"><span class="text-[var(--color-accent)] mr-3 mt-1">◆</span><strong class="font-semibold text-[var(--color-base)] mr-2">Curated Practices:</strong> A personalized library of mindfulness and somatic exercises to build resilience.</li>
+                            </ul>
+                        </div>
+                        <div class="md:col-span-2 bg-stone-50 p-8 rounded-lg shadow-lg border border-gray-100">
+                            <h3 class="text-2xl font-bold text-center text-[var(--color-base)] font-display mb-4">Investment</h3>
+                            <div class="space-y-4 text-center">
+                                <div>
+                                    <p class="text-3xl font-display text-[var(--color-accent)]">$3,000</p>
+                                    <p class="text-gray-600">Paid in Full</p>
+                                </div>
+                                <div class="text-gray-400">or</div>
+                                <div>
+                                    <p class="text-3xl font-display text-[var(--color-accent)]">2 x $1,600</p>
+                                    <p class="text-gray-600">Two Installments</p>
+                                </div>
+                                <div class="text-gray-400">or</div>
+                                 <div>
+                                    <p class="text-3xl font-display text-[var(--color-accent)]">$350</p>
+                                    <p class="text-gray-600">Per Session</p>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="bg-indigo-50 p-8 rounded-xl shadow-lg border border-indigo-100">
-                        <h3 class="text-3xl font-bold text-center text-indigo-900 mb-6">Investment</h3>
-                        <p class="text-center text-indigo-800 mb-6">Special pricing for our beta pilot program.</p>
-                        <div class="bg-white p-6 rounded-lg">
-                            <h4 class="text-xl font-bold text-center text-stone-900 mb-4">10 Session Package</h4>
-                            <ul class="space-y-4 text-lg text-stone-700">
-                                <li class="flex justify-between items-center"><span>Pay Per Session:</span> <span class="font-bold text-indigo-800">$350</span></li>
-                                <li class="flex justify-between items-center border-t pt-4 mt-4"><span>Two Installments:</span> <span class="font-bold text-indigo-800">$1600 x 2</span></li>
-                                <li class="flex justify-between items-center border-t pt-4 mt-4"><span>Paid Upfront:</span> <span class="font-bold text-green-600">$3000</span></li>
-                            </ul>
+                </div>
+                <!-- Final CTA -->
+                <div class="text-center mt-24 py-16 bg-stone-50 rounded-lg">
+                    <h2 class="text-3xl font-bold text-[var(--color-base)] font-display">Ready to Begin?</h2>
+                    <p class="text-lg max-w-2xl mx-auto my-4">Your path to aligned success and deep fulfillment starts with a simple conversation. Let's explore what's possible.</p>
+                    <a href="#" onclick="event.preventDefault(); showPage('payment')" class="primary-button inline-block mt-4 bg-[var(--color-accent)] hover:bg-[var(--color-accent-dark)] text-white font-bold py-4 px-12 rounded-full text-xl transition-colors duration-300 shadow-lg">
+                        Begin Your Journey
+                    </a>
+                </div>
+            </main>
+        </div>
+
+        <!-- Payment Page Content -->
+        <div id="payment-page" class="page-content">
+            <header class="bg-stone-100 py-24 px-6">
+                <div class="container mx-auto text-center">
+                    <h1 class="text-4xl md:text-5xl font-bold text-[var(--color-base)] font-display">Complete Your Investment</h1>
+                    <p class="text-lg text-[var(--color-base)] mt-4 max-w-3xl mx-auto">Thank you for choosing to embark on this journey. Please select your preferred payment method below. After payment, you will receive a welcome email to schedule your first session.</p>
+                </div>
+            </header>
+            <main class="py-24 px-6 bg-white">
+                <div class="container mx-auto max-w-2xl">
+                    <div class="bg-white p-8 md:p-12 rounded-lg shadow-2xl border border-gray-100 space-y-8">
+                        <!-- PayPal Option -->
+                        <div class="text-center">
+                             <h2 class="text-2xl font-bold text-[var(--color-base)] font-display mb-2">PayPal</h2>
+                             <p class="text-lg">Send payment to:</p>
+                             <p class="text-xl font-semibold text-[var(--color-indigo-deep)] mt-1">@jatinalla</p>
                         </div>
-                        <p class="text-center mt-6 text-indigo-800 text-sm">Pricing expected to increase 3-5x with full production release.</p>
-                        <div class="mt-6 text-center text-sm text-indigo-800">
-                            <p class="font-semibold mb-2">Payable through:</p><p>PayPal: @jatinalla</p><p>Zelle: jatinalla2000@gmail.com (415-960-5333)</p>
+                        <hr>
+                        <!-- Zelle Option -->
+                        <div class="text-center">
+                            <h2 class="text-2xl font-bold text-[var(--color-base)] font-display mb-2">Zelle</h2>
+                            <p class="text-lg">Send payment using the following details:</p>
+                            <p class="text-xl font-semibold text-[var(--color-indigo-deep)] mt-1">jatinalla2000@gmail.com</p>
+                            <p class="text-lg text-gray-600">or</p>
+                            <p class="text-xl font-semibold text-[var(--color-indigo-deep)]">415-960-5333</p>
                         </div>
+                    </div>
+                    <div class="text-center mt-12">
+                        <a href="#" onclick="event.preventDefault(); showPage('coaching')" class="text-[var(--color-base)] hover:text-[var(--color-accent)] transition-colors duration-300">&larr; Back to Coaching Details</a>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+
+        <!-- Contact Page Content -->
+        <div id="contact-page" class="page-content">
+            <header class="bg-stone-100 py-24 px-6">
+                <div class="container mx-auto text-center">
+                    <h1 class="text-4xl md:text-5xl font-bold text-[var(--color-base)] font-display">Connect With Us</h1>
+                    <p class="text-lg text-[var(--color-base)] mt-4 max-w-2xl mx-auto">For general inquiries, partnerships, or questions not related to coaching, please use the form below. For coaching inquiries, please schedule a discovery call via our Coaching page.</p>
+                </div>
+            </header>
+            <main class="py-24 px-6 bg-white">
+                <div class="container mx-auto max-w-4xl">
+                    <div class="bg-white p-8 md:p-12 rounded-lg shadow-2xl border border-gray-100">
+                        <form id="contact-form">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <label for="name" class="block text-[var(--color-base)] font-semibold mb-2">Full Name</label>
+                                    <input type="text" id="name" name="name" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] transition" required>
+                                </div>
+                                <div>
+                                    <label for="email" class="block text-[var(--color-base)] font-semibold mb-2">Email Address</label>
+                                    <input type="email" id="email" name="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] transition" required>
+                                </div>
+                            </div>
+                            <div class="mb-6">
+                                <label for="message" class="block text-[var(--color-base)] font-semibold mb-2">Message</label>
+                                <textarea id="message" name="message" rows="6" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] transition" placeholder="Tell us a little about what you're seeking..." required></textarea>
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="primary-button bg-[var(--color-accent)] hover:bg-[var(--color-accent-dark)] text-white font-bold py-3 px-10 rounded-full text-lg transition-colors duration-300 shadow-lg">
+                                    Send Message
+                                </button>
+                            </div>
+                        </form>
+                        <div id="form-status" class="mt-6 text-center"></div>
                     </div>
                 </div>
             </main>
@@ -311,279 +423,353 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-stone-800 text-white">
-        <div class="container mx-auto px-6 py-8 text-center">
-            <p>&copy; 2024 Kairos Path Coaching. All Rights Reserved.</p>
-            <p class="mt-2 text-sm text-stone-400">Contact: jatinalla2000@gmail.com | shal.verm@gmail.com</p>
+    <footer class="bg-[var(--color-base)] text-[var(--color-text)] py-12 px-6">
+        <div class="container mx-auto text-center">
+            <p>&copy; <span id="copyright-year"></span> Kairos Path Coaching. All Rights Reserved.</p>
+            <p class="text-sm opacity-70 mt-2">A vessel for personal and collective transformation.</p>
         </div>
     </footer>
 
+    <!-- Concept Definition Modal -->
+    <div id="concept-modal" class="modal-backdrop hidden">
+        <div class="modal-content bg-white text-[var(--color-base)] p-8 rounded-lg shadow-2xl max-w-md w-full mx-4">
+            <h3 id="modal-title" class="text-2xl font-bold font-display mb-4"></h3>
+            <p id="modal-definition" class="text-lg"></p>
+            <button id="modal-close-button" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+
     <script>
-        // --- Navigation Logic ---
-        const pages = document.querySelectorAll('.page-content');
-        const mobileMenu = document.getElementById('mobile-menu');
-
-        function showPage(pageId) {
-            pages.forEach(page => {
-                page.style.display = (page.id === `${pageId}-page`) ? 'block' : 'none';
-            });
-            window.scrollTo(0, 0);
-        }
-
         document.addEventListener('DOMContentLoaded', () => {
-            showPage('home');
-            document.getElementById('mobile-menu-button').addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
-            
-            // --- p5.js Generative Logo ---
-            let logoSketch = function(p) {
-                let angle = 0;
-                let speed = 0.005;
-                let hoverSpeed = 0.02;
-                let currentSpeed = speed;
 
-                p.setup = function() {
-                    let canvas = p.createCanvas(32, 32);
+            // --- Page Navigation ---
+            const pages = document.querySelectorAll('.page-content');
+            const navLinks = document.querySelectorAll('.nav-link');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+
+            window.showPage = (pageId) => {
+                const targetPage = document.getElementById(pageId + '-page');
+                if (!targetPage) return;
+
+                pages.forEach(page => {
+                    if (page.id !== targetPage.id) {
+                        gsap.to(page, { autoAlpha: 0, duration: 0.4, onComplete: () => {
+                            page.style.display = 'none';
+                        }});
+                    }
+                });
+
+                targetPage.style.display = 'block';
+                gsap.to(targetPage, { autoAlpha: 1, duration: 0.4, delay: 0.1 });
+
+                navLinks.forEach(link => {
+                    if (link.dataset.page === pageId) {
+                        link.classList.add('text-[var(--color-accent)]', 'font-semibold');
+                    } else {
+                        link.classList.remove('text-[var(--color-accent)]', 'font-semibold');
+                    }
+                });
+
+                if (!mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.add('hidden');
+                }
+                
+                window.scrollTo(0, 0);
+            }
+
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+                mobileMenu.querySelectorAll('a').forEach(link => {
+                    const page = link.getAttribute('onclick').match(/'([^']+)'/)[1];
+                    link.onclick = (e) => {
+                        e.preventDefault();
+                        showPage(page);
+                    };
+                });
+            });
+
+            showPage('home');
+            document.getElementById('copyright-year').textContent = new Date().getFullYear();
+
+            gsap.timeline({ delay: 0.5 })
+                .to("#hero-h1", { y: -20, opacity: 1, duration: 0.8, ease: 'power2.out' })
+                .to("#hero-p", { y: -10, opacity: 1, duration: 0.7, ease: 'power2.out' }, "-=0.5")
+                .to("#hero-button", { opacity: 1, scale: 1, duration: 0.6, ease: 'back.out(1.7)' }, "-=0.4");
+
+            const logoSketch = (p) => {
+                let angle = 0;
+                p.setup = () => {
+                    let canvas = p.createCanvas(40, 40);
                     canvas.parent('logo-canvas');
                     p.noFill();
-                    p.strokeWeight(2);
+                    p.strokeWeight(1.5);
                 };
 
-                p.draw = function() {
+                p.draw = () => {
                     p.clear();
-                    p.stroke(getComputedStyle(document.documentElement).getPropertyValue('--color-gold-light').trim());
-                    
-                    let isHovered = p.dist(p.mouseX, p.mouseY, p.width / 2, p.height / 2) < p.width / 2;
-                    currentSpeed = p.lerp(currentSpeed, isHovered ? hoverSpeed : speed, 0.05);
-
-                    angle += currentSpeed;
-
-                    let r1 = 13 + p.sin(angle * 2) * 2;
-                    let r2 = 13 + p.cos(angle * 2) * 2;
-
-                    p.arc(p.width / 2, p.height / 2, r1, r1, p.PI + angle, p.TWO_PI + angle);
-                    p.arc(p.width / 2, p.height / 2, r2, r2, angle, p.PI + angle);
+                    p.stroke(getComputedStyle(document.documentElement).getPropertyValue('--color-base').trim());
+                    let d = 28;
+                    p.translate(p.width / 2, p.height / 2);
+                    p.rotate(angle);
+                    for (let i = 0; i < 8; i++) {
+                        p.push();
+                        p.rotate(p.TWO_PI * i / 8);
+                        p.line(0, d / 4, 0, d / 2);
+                        p.pop();
+                    }
+                    p.circle(0, 0, d / 2.5);
+                    angle += 0.005;
                 };
             };
             new p5(logoSketch);
-
-            // --- GSAP & Three.js Animations ---
-            gsap.registerPlugin(ScrollTrigger);
-
-            // Hero Text Animation
-            gsap.to("#hero-h1", { opacity: 1, y: -20, duration: 1.5, delay: 0.5, ease: "power3.out" });
-            gsap.to("#hero-p", { opacity: 1, y: -20, duration: 1.5, delay: 0.8, ease: "power3.out" });
-            gsap.to("#hero-button", { opacity: 1, y: -20, duration: 1.5, delay: 1.1, ease: "power3.out" });
-
-            // Scroll-based fade out for Hero
-            gsap.to("#hero .relative", {
-                scrollTrigger: {
-                    trigger: "#hero",
-                    start: "center center",
-                    end: "bottom top",
-                    scrub: true,
+            
+            // --- Concept Modal Logic ---
+            const conceptDefinitions = {
+                enneagram: {
+                    title: 'The Enneagram',
+                    definition: 'A profound system of personality typology that reveals the nine core motivations, fears, and unconscious patterns that drive human behavior. It serves as a map to self-awareness and personal growth.'
                 },
-                opacity: 0
+                genekeys: {
+                    title: 'The Gene Keys',
+                    definition: 'A system of wisdom that synthesizes genetics, the I Ching, and astrology to illuminate your unique life purpose. It offers a contemplative journey into the higher potentials encoded in your DNA.'
+                },
+                sankaras: {
+                    title: 'Sankaras',
+                    definition: 'In yogic philosophy, sankaras are deep-seated energetic impressions or wounds from the past, stored in the subconscious mind and body. They manifest as recurring patterns of thought and behavior, and their release is key to liberation.'
+                }
+            };
+
+            const modal = document.getElementById('concept-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalDefinition = document.getElementById('modal-definition');
+            const modalCloseButton = document.getElementById('modal-close-button');
+            const infoIcons = document.querySelectorAll('.concept-info');
+
+            function showModal(concept) {
+                const data = conceptDefinitions[concept];
+                if (!data) return;
+                modalTitle.textContent = data.title;
+                modalDefinition.textContent = data.definition;
+                modal.classList.remove('hidden');
+                gsap.fromTo(modal, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3 });
+            }
+
+            function hideModal() {
+                gsap.to(modal, { autoAlpha: 0, duration: 0.3, onComplete: () => modal.classList.add('hidden') });
+            }
+
+            infoIcons.forEach(icon => {
+                icon.addEventListener('click', (e) => {
+                    const concept = e.target.dataset.concept;
+                    showModal(concept);
+                });
             });
 
-            // Three.js Portal Animation
-            let scene, camera, renderer, clock, blueprint, particles, actualizeStar;
-            const canvas = document.getElementById('three-canvas');
+            modalCloseButton.addEventListener('click', hideModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    hideModal();
+                }
+            });
+
+
+            // --- Three.js Scroll Animation ---
+            let scene, camera, renderer, clock, particles;
+            let discoverPositions, integratePositions, actualizePositions;
+            const threeCanvas = document.getElementById('three-canvas');
+            const portalContainer = document.getElementById('portal-container');
+            const PARTICLE_COUNT = 5000;
 
             function initThree() {
                 scene = new THREE.Scene();
                 clock = new THREE.Clock();
                 camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-                renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true });
+                camera.position.z = 4;
+                renderer = new THREE.WebGLRenderer({ canvas: threeCanvas, antialias: true, alpha: true });
                 renderer.setSize(window.innerWidth, window.innerHeight);
-                camera.position.z = 5;
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-                // Discover: Blueprint
-                const geometry = new THREE.IcosahedronGeometry(1.5, 0);
-                const material = new THREE.MeshBasicMaterial({ color: 0xD6A3B3, wireframe: true });
-                blueprint = new THREE.Mesh(geometry, material);
-                blueprint.visible = false;
-                scene.add(blueprint);
+                // Create position arrays for each state
+                discoverPositions = new Float32Array(PARTICLE_COUNT * 3);
+                integratePositions = new Float32Array(PARTICLE_COUNT * 3);
+                actualizePositions = new Float32Array(PARTICLE_COUNT * 3);
+                const colors = new Float32Array(PARTICLE_COUNT * 3);
 
-                // Integrate: Particles
-                const particlesGeometry = new THREE.BufferGeometry();
-                const particlesCnt = 5000;
-                const posArray = new Float32Array(particlesCnt * 3);
-                for(let i = 0; i < particlesCnt * 3; i++) {
-                    posArray[i] = (Math.random() - 0.5) * 10;
+                const color1 = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--color-accent'));
+                const color2 = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--color-indigo-deep'));
+
+                for (let i = 0; i < PARTICLE_COUNT; i++) {
+                    const i3 = i * 3;
+
+                    // Discover (Sphere)
+                    const phi = Math.acos(-1 + (2 * i) / PARTICLE_COUNT);
+                    const theta = Math.sqrt(PARTICLE_COUNT * Math.PI) * phi;
+                    discoverPositions[i3] = 2.5 * Math.cos(theta) * Math.sin(phi);
+                    discoverPositions[i3 + 1] = 2.5 * Math.sin(theta) * Math.sin(phi);
+                    discoverPositions[i3 + 2] = 2.5 * Math.cos(phi);
+
+                    // Integrate (Random Cloud)
+                    integratePositions[i3] = (Math.random() - 0.5) * 10;
+                    integratePositions[i3 + 1] = (Math.random() - 0.5) * 10;
+                    integratePositions[i3 + 2] = (Math.random() - 0.5) * 10;
+
+                    // Actualize (Center Point)
+                    actualizePositions[i3] = 0;
+                    actualizePositions[i3 + 1] = 0;
+                    actualizePositions[i3 + 2] = 0;
+
+                    // Colors
+                    const mixedColor = color1.clone().lerp(color2, Math.random());
+                    colors[i3] = mixedColor.r;
+                    colors[i3 + 1] = mixedColor.g;
+                    colors[i3 + 2] = mixedColor.b;
                 }
-                particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-                const particlesMaterial = new THREE.PointsMaterial({ size: 0.01, color: 0xC0A062 });
-                particles = new THREE.Points(particlesGeometry, particlesMaterial);
-                particles.visible = false;
+
+                // Create the single particle system
+                const geometry = new THREE.BufferGeometry();
+                geometry.setAttribute('position', new THREE.BufferAttribute(discoverPositions.slice(), 3));
+                geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+                
+                const material = new THREE.PointsMaterial({
+                    size: 0.025,
+                    vertexColors: true,
+                    blending: THREE.AdditiveBlending,
+                    transparent: true,
+                    depthWrite: false,
+                });
+
+                particles = new THREE.Points(geometry, material);
                 scene.add(particles);
 
-                // Actualize: Pulsing Star
-                const starGeometry = new THREE.SphereGeometry(1.5, 64, 64);
-                const starMaterial = new THREE.PointsMaterial({
-                    size: 0.02,
-                    color: 0x37306B,
-                    transparent: true,
-                    blending: THREE.AdditiveBlending,
-                    depthWrite: false,
-                    map: createStarTexture()
-                });
-                actualizeStar = new THREE.Points(starGeometry, starMaterial);
-                actualizeStar.visible = false;
-                scene.add(actualizeStar);
-                
-                animate();
+                animateThree();
+                window.addEventListener('resize', onWindowResize, false);
+                setupScrollAnimations();
             }
 
-            function createStarTexture() {
-                const canvas = document.createElement('canvas');
-                canvas.width = 64;
-                canvas.height = 64;
-                const context = canvas.getContext('2d');
-                const gradient = context.createRadialGradient(32, 32, 0, 32, 32, 32);
-                gradient.addColorStop(0, 'rgba(255,255,255,1)');
-                gradient.addColorStop(0.2, 'rgba(244, 241, 237, 0.8)');
-                gradient.addColorStop(0.4, 'rgba(192, 160, 98, 0.5)');
-                gradient.addColorStop(1, 'rgba(255,255,255,0)');
-                context.fillStyle = gradient;
-                context.fillRect(0, 0, 64, 64);
-                return new THREE.CanvasTexture(canvas);
+            function onWindowResize() {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             }
 
-            function animate() {
+            function animateThree() {
                 const elapsedTime = clock.getElapsedTime();
-                requestAnimationFrame(animate);
-                if (blueprint && blueprint.visible) blueprint.rotation.y += 0.002;
-                if (particles && particles.visible) particles.rotation.y += 0.001;
-                if (actualizeStar && actualizeStar.visible) {
-                    actualizeStar.rotation.y += 0.003;
-                    actualizeStar.material.size = 0.02 + Math.sin(elapsedTime * 2) * 0.005;
+                if (particles) {
+                    particles.rotation.y = elapsedTime * 0.02;
+                    particles.rotation.x = elapsedTime * 0.01;
                 }
                 renderer.render(scene, camera);
+                requestAnimationFrame(animateThree);
+            }
+            
+            function setupScrollAnimations() {
+                gsap.registerPlugin(ScrollTrigger);
+
+                // Fade in/out the canvas
+                ScrollTrigger.create({
+                    trigger: portalContainer,
+                    start: 'top bottom',
+                    end: 'bottom top',
+                    onEnter: () => gsap.to(threeCanvas, { opacity: 1, duration: 1 }),
+                    onLeave: () => gsap.to(threeCanvas, { opacity: 0, duration: 1 }),
+                    onEnterBack: () => gsap.to(threeCanvas, { opacity: 1, duration: 1 }),
+                    onLeaveBack: () => gsap.to(threeCanvas, { opacity: 0, duration: 1 }),
+                });
+
+                // Animate text content
+                gsap.utils.toArray('.portal-step').forEach((step, i) => {
+                    const content = step.querySelector('.content');
+                    gsap.fromTo(content, 
+                        { autoAlpha: 0, y: 50 },
+                        {
+                            autoAlpha: 1, y: 0, duration: 1,
+                            scrollTrigger: {
+                                trigger: step,
+                                start: 'top center',
+                                end: 'bottom bottom',
+                                toggleActions: 'play none none reverse',
+                                // Add a small delay for the first step to ensure it doesn't fire too early
+                                delay: i === 0 ? 0.2 : 0, 
+                            }
+                        }
+                    );
+                });
+
+                // Main morphing animation timeline
+                const morphTl = gsap.timeline({
+                    scrollTrigger: {
+                        trigger: '#portal-container',
+                        pin: true,
+                        scrub: 1,
+                        start: 'top top',
+                        end: '+=200%' // 3 sections, so 2 full scrolls
+                    }
+                });
+
+                // Animate from Discover -> Integrate
+                morphTl.to(particles.geometry.attributes.position, {
+                    endArray: integratePositions,
+                    onUpdate: () => { if(particles) particles.geometry.attributes.position.needsUpdate = true; }
+                }, 0); // Start at the beginning of the timeline
+
+                // Animate from Integrate -> Actualize
+                morphTl.to(particles.geometry.attributes.position, {
+                    endArray: actualizePositions,
+                    onUpdate: () => { if(particles) particles.geometry.attributes.position.needsUpdate = true; }
+                }, 1); // Start at the second half of the timeline
+
+                // Animate particle size for the "star" effect
+                morphTl.to(particles.material, { size: 0.08 }, 1); // Grow size during integrate->actualize
+                morphTl.to(particles.material, { size: 0.01 }, 1.5); // Shrink to a point
             }
 
-            initThree();
 
-            gsap.timeline({
-                scrollTrigger: {
-                    trigger: "#portal-container",
-                    start: "top bottom",
-                    end: "bottom top",
-                    onEnter: () => gsap.to(canvas, { opacity: 1 }),
-                    onLeave: () => gsap.to(canvas, { opacity: 0 }),
-                    onEnterBack: () => gsap.to(canvas, { opacity: 1 }),
-                    onLeaveBack: () => gsap.to(canvas, { opacity: 0 }),
-                }
+            let lastScrollTop = 0;
+            const navbar = document.getElementById('navbar');
+            window.addEventListener("scroll", function() {
+               let st = window.pageYOffset || document.documentElement.scrollTop;
+               if (st > lastScrollTop && st > navbar.offsetHeight){
+                   gsap.to(navbar, { y: '-100%', duration: 0.3, ease: 'power2.out' });
+               } else {
+                   gsap.to(navbar, { y: '0%', duration: 0.3, ease: 'power2.out' });
+               }
+               lastScrollTop = st <= 0 ? 0 : st;
+            }, false);
+
+            const contactForm = document.getElementById('contact-form');
+            const formStatus = document.getElementById('form-status');
+            contactForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                formStatus.innerHTML = '<p class="text-green-600">Thank you for your message! We will get back to you shortly.</p>';
+                contactForm.reset();
+                setTimeout(() => {
+                    formStatus.innerHTML = '';
+                }, 5000);
             });
             
-            // Discover Animation
-            gsap.timeline({
-                scrollTrigger: {
-                    trigger: "#discover-step",
-                    start: "top center",
-                    end: "bottom center",
-                    scrub: true,
-                    onEnter: () => blueprint.visible = true,
-                    onLeave: () => blueprint.visible = false,
-                    onEnterBack: () => blueprint.visible = true,
-                    onLeaveBack: () => blueprint.visible = false,
-                }
-            }).fromTo(blueprint.scale, {x:0, y:0, z:0}, {x:1, y:1, z:1})
-              .to(blueprint.scale, {x:0, y:0, z:0});
-
-            // Integrate Animation
-            gsap.timeline({
-                scrollTrigger: {
-                    trigger: "#integrate-step",
-                    start: "top center",
-                    end: "bottom center",
-                    scrub: true,
-                    onEnter: () => particles.visible = true,
-                    onLeave: () => particles.visible = false,
-                    onEnterBack: () => particles.visible = true,
-                    onLeaveBack: () => particles.visible = false,
-                }
-            }).fromTo(particles.material, {size: 0}, {size: 0.015})
-              .to(particles.material, {size: 0});
-
-            // Actualize Animation
-            gsap.timeline({
-                scrollTrigger: {
-                    trigger: "#actualize-step",
-                    start: "top center",
-                    end: "bottom center",
-                    scrub: true,
-                    onEnter: () => actualizeStar.visible = true,
-                    onLeave: () => actualizeStar.visible = false,
-                    onEnterBack: () => actualizeStar.visible = true,
-                    onLeaveBack: () => actualizeStar.visible = false,
-                }
-            }).fromTo(actualizeStar.scale, {x:0, y:0, z:0}, {x:1, y:1, z:1})
-              .to(actualizeStar.scale, {x:0, y:0, z:0});
+            // Button Pop Animation
+            const primaryButtons = document.querySelectorAll('.primary-button');
+            primaryButtons.forEach(button => {
+                button.addEventListener('mouseenter', () => {
+                    gsap.to(button, { scale: 1.05, duration: 0.3, ease: 'back.out(1.7)' });
+                });
+                 button.addEventListener('mouseleave', () => {
+                    gsap.to(button, { scale: 1, duration: 0.3, ease: 'power2.out' });
+                });
+            });
 
 
-            // Constellation Animation
-            let constellationSketch = function(p) {
-                let stars = [];
-                const starCount = 5;
-                const labels = [
-                    "Embody Equanimity", "Attune to Your Inner Compass", "Heal the Root of Burnout", "Lead from Wholeness", "Experience Unity"
-                ];
-
-                p.setup = function() {
-                    let canvas = p.createCanvas(p.windowWidth, p.windowHeight);
-                    canvas.parent('constellation-canvas');
-                    for(let i=0; i<starCount; i++) {
-                        stars.push({
-                            x: p.random(p.width * 0.2, p.width * 0.8),
-                            y: p.random(p.height * 0.2, p.height * 0.8),
-                            label: labels[i % labels.length]
-                        });
-                    }
-                };
-
-                p.draw = function() {
-                    p.clear();
-                    let hoveredStar = null;
-
-                    for(let star of stars) {
-                        let d = p.dist(p.mouseX, p.mouseY, star.x, star.y);
-                        if (d < 10) {
-                            hoveredStar = star;
-                        }
-                    }
-
-                    for(let i=0; i<stars.length; i++) {
-                        for(let j=i+1; j<stars.length; j++) {
-                            p.stroke(255, 255, 255, 50);
-                            p.strokeWeight(0.5);
-                            p.line(stars[i].x, stars[i].y, stars[j].x, stars[j].y);
-                        }
-                    }
-                    
-                    for(let star of stars) {
-                        p.noStroke();
-                        p.fill(255, 255, 255, 150);
-                        p.circle(star.x, star.y, 8);
-
-                        if (star === hoveredStar) {
-                            p.fill(255, 255, 255, 255);
-                            p.circle(star.x, star.y, 12);
-                            p.fill(255);
-                            p.textAlign(p.CENTER, p.BOTTOM);
-                            p.textSize(16);
-                            p.text(star.label, star.x, star.y - 15);
-                        }
-                    }
-                };
-                p.windowResized = function() {
-                    p.resizeCanvas(p.windowWidth, p.windowHeight);
-                }
-            };
-            new p5(constellationSketch);
+            if (portalContainer) {
+                initThree();
+            }
         });
-
     </script>
 </body>
 </html>
